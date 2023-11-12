@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-
-import '../../model/enums.dart';
 import '../../model/fight.dart';
 
 abstract class FightState extends Equatable{}
@@ -21,14 +19,6 @@ class FightLoaded extends FightState {
 
   @override
   List<Object> get props => [fight];
-}
-
-class OpenAddCharacterDialog extends FightState {
-  final TeamType teamType;
-
-  OpenAddCharacterDialog(this.teamType);
-  @override
-  List<Object> get props => [teamType];
 }
 
 class FightError extends FightState with EquatableMixin {

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -71,6 +70,7 @@ class CreaturesScreen extends StatelessWidget {
                       DataColumn(label: Text('Intelligence')),
                       DataColumn(label: Text('Sagesse')),
                       DataColumn(label: Text('Charisme')),
+                      DataColumn(label: Text('Vie')),
                     ],
                     rows: state.creatures.map((creature) => DataRow(
                       cells: [
@@ -81,6 +81,7 @@ class CreaturesScreen extends StatelessWidget {
                         DataCell(Text(creature.intelligence.toString()), onTap: () => _addOrEditCreature(context, creature)),
                         DataCell(Text(creature.wisdom.toString()), onTap: () => _addOrEditCreature(context, creature)),
                         DataCell(Text(creature.charisma.toString()), onTap: () => _addOrEditCreature(context, creature)),
+                        DataCell(Text(creature.hpDetails), onTap: () => _addOrEditCreature(context, creature)),
                       ],
                     )).toList(),
                   ),

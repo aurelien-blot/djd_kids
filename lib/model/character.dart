@@ -1,46 +1,49 @@
-import 'creature.dart';
-
 class Character {
   int? id;
   String name;
   String? creatureName;
+  int? creatureId;
   int strength; // Force
   int dexterity; // Dextérité
   int constitution; // Constitution
   int intelligence; // Intelligence
   int wisdom; // Sagesse
   int charisma; // Charisme
+  int? initiative;
+  int hpMax;
+  int hpCurrent;
 
   Character({
     required this.name,
     this.creatureName,
+    this.creatureId,
     required this.strength,
     required this.dexterity,
     required this.constitution,
     required this.intelligence,
     required this.wisdom,
     required this.charisma,
+    required this.hpMax,
+    required this.hpCurrent,
+    this.initiative,
     this.id
   });
-
-  static Character initCharacter(String name, Creature creature){
-    return Character(name: name, creatureName : creature.name,
-        strength: creature.strength, dexterity: creature.dexterity,
-        constitution: creature.constitution, intelligence: creature.intelligence,
-        wisdom: creature.wisdom, charisma: creature.charisma);
-  }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
-      'creatureName': creatureName,
+      'creatureName': creatureName??'',
+      'creatureName': creatureId??'',
       'strength' :strength,
       'dexterity' :dexterity,
       'constitution' :constitution,
       'intelligence' :intelligence,
       'wisdom' :wisdom,
       'charisma' :charisma,
+      'initiave' :initiative??'',
+      'hpMax' :hpMax,
+      'hpCurrent' :hpCurrent,
     };
   }
 
@@ -48,12 +51,16 @@ class Character {
     id = map['id'],
     name = map['name'],
     creatureName = map['creatureName'],
+    creatureId = map['creatureId'],
     strength = map['strength']??0,
     dexterity = map['dexterity']??0,
     constitution = map['constitution']??0,
     intelligence = map['intelligence']??0,
     wisdom = map['wisdom']??0,
-    charisma = map['charisma']??0;
+    charisma = map['charisma']??0,
+    hpMax = map['hpMax']??0,
+    hpCurrent = map['hpCurrent']??0,
+    initiative = map['initiative'];
 
 
 }

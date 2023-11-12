@@ -20,13 +20,6 @@ class CreateFightEvent extends FightEvent {
   @override
   List<Object> get props => [fight];
 }
-class OpenAddCharacterDialogEvent extends FightEvent {
-  final TeamType teamType;
-  OpenAddCharacterDialogEvent(this.teamType);
-
-  @override
-  List<Object> get props => [teamType];
-}
 
 class AddCharacterEvent extends FightEvent {
   final TeamType teamType;

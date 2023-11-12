@@ -8,43 +8,104 @@ import '../bloc/fight/fight_event.dart';
 import '../model/character.dart';
 import '../model/enums.dart';
 import '../model/fight.dart';
-import '../widget/character_dialog.dart';
+import '../service/character_service.dart';
+import '../widget/add_character_form.dart';
+import '../widget/initiative_band.dart';
 import '../widget/loading_dialog.dart';
 
 class FightScreen extends StatelessWidget {
   final DatabaseService databaseService;
+  final CharacterService _characterService = CharacterService();
 
-  const FightScreen({Key? key, required this.databaseService}) : super(key: key);
+  FightScreen({Key? key, required this.databaseService}) : super(key: key);
 
-  void _showAddCharacterModal(BuildContext context, OpenAddCharacterDialog state) {
-    showModalBottomSheet(
+  void _showAddCharacterModal(BuildContext context, TeamType teamType) async{
+    final FightBloc fightBloc = context.read<FightBloc>();
+    final result = await showDialog<Character>(
       context: context,
-      builder: (BuildContext context) {
-        return AddCharacterForm( teamType: state.teamType);
-      },
+      builder: (ctx) => AddCharacterForm(teamType: teamType, databaseService: databaseService, characterService: _characterService),
     );
+    if (result != null) {
+      fightBloc.add(AddCharacterEvent(teamType, result));
+    }
   }
 
   Expanded buildTeamZone(BuildContext context, TeamType teamType, List<Character> team) {
     return Expanded(
+      flex: 2,
       child: Column(
         children: [
           Expanded(
             child: ListView.builder(
               itemCount: team.length,
               itemBuilder: (context, index) {
-                return Text (team[index].name);
-                //return CharacterBanner(hero: heroes[index]);
+                return _characterCard(context, team[index]);
               },
             ),
           ),
           ElevatedButton(
             onPressed: () {
-              context.read<FightBloc>().add(OpenAddCharacterDialogEvent(teamType));
+              _showAddCharacterModal(context, teamType);
             },
             child: Text('Ajouter un ${teamType == TeamType.allies?'allié':'ennemi'}'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _characterCard(BuildContext context, Character character) {
+    String title = character.name;
+    if (character.creatureName!=null) {
+      title += ' (${character.creatureName})';
+    }
+    return Card(
+
+      child: ListTile(
+        leading: const CircleAvatar(
+          backgroundImage: AssetImage('assets/characters/anonym.jpg'),
+        ),
+        title: Text(title),
+        subtitle:
+            Column(
+              children: [
+                /*Text('PV: ${character.currentHp}/${character.maxHp}'),
+                Text('CA: ${character.ca}'),*/
+                Padding(
+                padding: const EdgeInsets.all(8.0),
+                  child:Text('PV: ${character.hpCurrent}/${character.hpMax}')
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:
+                  Table(
+                    children: [
+                      const TableRow(
+                        children: [
+                          Text('FOR', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('DEX', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('CON', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('INT', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('SAG', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('CHA', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          Text('${character.strength}'),
+                          Text('${character.dexterity}'),
+                          Text('${character.constitution}'),
+                          Text('${character.intelligence}'),
+                          Text('${character.wisdom}'),
+                          Text('${character.charisma}'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
       ),
     );
   }
@@ -57,9 +118,6 @@ class FightScreen extends StatelessWidget {
         },
         child: BlocConsumer<FightBloc, FightState>(
             listener: (context, state) {
-              if(state is OpenAddCharacterDialog){
-                _showAddCharacterModal(context, state);
-              }
             },
             builder: (context, state) {
               final fightBloc = context.read<FightBloc>();
@@ -118,12 +176,23 @@ class FightScreen extends StatelessWidget {
                     body:
                       Padding(padding: const EdgeInsets.all(10),
                         child:
-                          Row(
+                        Column(
                             children: [
-                              buildTeamZone(context, TeamType.allies, state.fight.allies),
-                              buildTeamZone(context, TeamType.enemies, state.fight.enemies),
+                              InitiativeBand(charactersByInitiative: state.fight.orderedByInitiative),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    buildTeamZone(context, TeamType.allies, state.fight.allies),
+                                    const Expanded(
+                                      flex: 1,
+                                      child: SizedBox.shrink(),
+                                    ),
+                                    buildTeamZone(context, TeamType.enemies, state.fight.enemies),
+                                  ]
+                                ),
+                              )
                             ]
-                          )
+                        )
                       )
                 );
               } else {

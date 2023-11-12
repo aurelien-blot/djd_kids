@@ -5,6 +5,7 @@ class Fight {
   String name;
   List<Character> allies;
   List<Character> enemies;
+  List<Character> orderedByInitiative = [];
 
   Fight({
     this.id,
