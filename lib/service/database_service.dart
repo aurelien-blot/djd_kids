@@ -27,6 +27,7 @@ class DatabaseService {
   static const columnInitiative = 'initiative';
   static const columnHpMax = 'hpMax';
   static const columnHpCurrent = 'hpCurrent';
+  static const columnCa = 'ca';
 
 
   // Autres colonnes pour les caractéristiques...
@@ -48,7 +49,7 @@ class DatabaseService {
 
   _initDatabase() async {
     //TODO A RETIRER SI NECESSAIRE
-    //await _resetDatabase();
+   // await _resetDatabase();
     String path = join(await getDatabasesPath(), _dbName);
     return await openDatabase(path,
         version: _dbVersion, onCreate: _onCreate);
@@ -84,7 +85,8 @@ class DatabaseService {
         '$columnCharisma INTEGER NOT NULL,'
         '$columnDiceHpNumber INTEGER NOT NULL,'
         '$columnDiceHpValue INTEGER NOT NULL,'
-        '$columnDiceHpBonus INTEGER NOT NULL'
+        '$columnDiceHpBonus INTEGER NOT NULL,'
+        '$columnCa INTEGER NOT NULL'
         ')');
   }
 
@@ -129,7 +131,8 @@ class DatabaseService {
         '$columnCharisma INTEGER NOT NULL,'
         '$columnInitiative INTEGER NULL,'
         '$columnHpMax INTEGER NOT NULL,'
-        '$columnHpCurrent INTEGER NOT NULL'
+        '$columnHpCurrent INTEGER NOT NULL,'
+        '$columnCa INTEGER NOT NULL'
         ')');
   }
 
@@ -162,12 +165,13 @@ class DatabaseService {
 
   Future<void> _initDatas() async{
     final CharacterService characterService = CharacterService();
-    Creature creature1 = Creature(name: 'Gobelin', strength: 8, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 8, charisma: 8, diceHpNumber: 3, diceHpValue: 6, diceHpBonus: 6);
-    Creature creature2 = Creature(name: 'Orc', strength: 16, dexterity: 12, constitution: 16, intelligence: 7, wisdom: 11, charisma: 10, diceHpNumber: 2, diceHpValue: 8, diceHpBonus: 6);
-    Creature creature3 = Creature(name: 'Géant des collines', strength: 21, dexterity: 8, constitution: 19, intelligence: 5, wisdom: 9, charisma: 6, diceHpNumber: 10, diceHpValue: 12, diceHpBonus: 40);
-    Creature creature4 = Creature(name: 'Géant du givre', strength: 23, dexterity: 9, constitution: 21, intelligence: 7, wisdom: 10, charisma: 12, diceHpNumber: 12, diceHpValue: 12, diceHpBonus: 60);
-    Creature creature5 = Creature(name: 'Géant des pierres', strength: 19, dexterity: 8, constitution: 20, intelligence: 10, wisdom: 12, charisma: 16, diceHpNumber: 11, diceHpValue: 12, diceHpBonus: 55);
-    Creature creature6 = Creature(name: 'Géant des tempêtes', strength: 25, dexterity: 14, constitution: 23, intelligence: 16, wisdom: 18, charisma: 20, diceHpNumber: 20, diceHpValue: 12, diceHpBonus: 100);
+   Creature creature1 = Creature(name: 'Gobelin', strength: 8, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 8, charisma: 8, diceHpNumber: 3, diceHpValue: 6, diceHpBonus: 6, ca: 15);
+    Creature creature2 = Creature(name: 'Orc', strength: 16, dexterity: 12, constitution: 16, intelligence: 7, wisdom: 11, charisma: 10, diceHpNumber: 2, diceHpValue: 8, diceHpBonus: 6, ca: 13);
+    Creature creature3 = Creature(name: 'Géant des collines', strength: 21, dexterity: 8, constitution: 19, intelligence: 5, wisdom: 9, charisma: 6, diceHpNumber: 10, diceHpValue: 12, diceHpBonus: 40, ca: 13);
+    Creature creature4 = Creature(name: 'Géant du givre', strength: 23, dexterity: 9, constitution: 21, intelligence: 7, wisdom: 10, charisma: 12, diceHpNumber: 12, diceHpValue: 12, diceHpBonus: 60, ca: 15);
+    Creature creature5 = Creature(name: 'Géant des pierres', strength: 19, dexterity: 8, constitution: 20, intelligence: 10, wisdom: 12, charisma: 16, diceHpNumber: 11, diceHpValue: 12, diceHpBonus: 55, ca: 17);
+    Creature creature6 = Creature(name: 'Géant des tempêtes', strength: 25, dexterity: 14, constitution: 23, intelligence: 16, wisdom: 18, charisma: 20, diceHpNumber: 20, diceHpValue: 12, diceHpBonus: 100, ca: 16);
+
     insertCreature(creature1);
     insertCreature(creature2);
     insertCreature(creature3);

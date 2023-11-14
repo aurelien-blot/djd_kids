@@ -30,6 +30,7 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
   final TextEditingController wisdomController = TextEditingController();
   final TextEditingController charismaController = TextEditingController();
   final TextEditingController hpController = TextEditingController();
+  final TextEditingController caController = TextEditingController();
 
 
   CharacterFormBloc({required this.databaseService, required this.characterService}) : super(FormLoading()) {
@@ -63,6 +64,7 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
     wisdomController.text = character.wisdom.toString();
     charismaController.text = character.charisma.toString();
     hpController.text = character.hpMax.toString();
+    caController.text = character.ca.toString();
 
   }
 
@@ -94,6 +96,7 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
     wisdomController.dispose();
     charismaController.dispose();
     hpController.dispose();
+    caController.dispose();
 
     return super.close();
   }

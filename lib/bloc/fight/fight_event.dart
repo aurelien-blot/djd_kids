@@ -30,3 +30,26 @@ class AddCharacterEvent extends FightEvent {
   List<Object> get props => [teamType, character];
 }
 
+class SelectCharacterEvent extends FightEvent {
+  final Character character;
+
+  SelectCharacterEvent(this.character);
+}
+
+class SelectTargetedCharacterEvent extends FightEvent {
+  final Character targetedCharacter;
+
+  SelectTargetedCharacterEvent(this.targetedCharacter);
+}
+
+class SelectCacAttackEvent extends FightEvent {
+  SelectCacAttackEvent();
+}
+
+class SelectDistAttackEvent extends FightEvent {
+  SelectDistAttackEvent();
+}
+
+class SelectMagicAttackEvent extends FightEvent {
+  SelectMagicAttackEvent();
+}

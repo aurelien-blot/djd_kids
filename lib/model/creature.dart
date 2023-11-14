@@ -10,6 +10,7 @@ class Creature {
   int diceHpNumber;
   int diceHpValue;
   int diceHpBonus;
+  int ca;
 
   String get hpDetails => '${diceHpNumber}d$diceHpValue+$diceHpBonus';
 
@@ -24,11 +25,14 @@ class Creature {
     required this.diceHpNumber,
     required this.diceHpValue,
     required this.diceHpBonus,
+    required this.ca,
     this.id
   });
 
   static Creature initCreature(String name){
-    return Creature(name: name, strength: 0, dexterity: 0, constitution: 0, intelligence: 0, wisdom: 0, charisma: 0, diceHpNumber: 0, diceHpValue: 0, diceHpBonus: 0);
+    return Creature(name: name, strength: 0, dexterity: 0,
+        constitution: 0, intelligence: 0, wisdom: 0, charisma: 0, diceHpNumber: 0,
+        diceHpValue: 0, diceHpBonus: 0, ca: 0);
   }
 
   Map<String, dynamic> toMap() {
@@ -44,6 +48,7 @@ class Creature {
       'diceHpNumber' :diceHpNumber,
       'diceHpValue' :diceHpValue,
       'diceHpBonus' :diceHpBonus,
+      'ca' :ca,
     };
   }
 
@@ -58,7 +63,7 @@ class Creature {
     charisma = map['charisma']??0,
     diceHpNumber = map['diceHpNumber']??0,
     diceHpValue = map['diceHpValue']??0,
-    diceHpBonus = map['diceHpBonus']??0;
-
-
+    diceHpBonus = map['diceHpBonus']??0,
+    ca = map['ca']??0
+  ;
 }

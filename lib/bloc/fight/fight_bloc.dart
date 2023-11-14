@@ -15,12 +15,21 @@ class FightBloc extends Bloc<FightEvent, FightState> {
 
   Fight? _fight;
   final CaracteristicService _caracteristicService = CaracteristicService();
-  final CharacterService _characterService = CharacterService();
+  Character? _selectedCharacter;
+  Character? _targetedCharacter=null;
+  bool _cacModeEnabled=false;
+  bool _distModeEnabled=false;
+  bool _magicModeEnabled=false;
 
   FightBloc(this.databaseService) : super(FightLoading()) {
     on<InitializeFightEvent>(_onInitializeFightEvent);
     on<CreateFightEvent>(_onCreateFightEvent);
     on<AddCharacterEvent>(_onAddCharacterEvent);
+    on<SelectCharacterEvent>(_onSelectCharacterEvent);
+    on<SelectCacAttackEvent>(_onSelectCacAttackEvent);
+    on<SelectDistAttackEvent>(_onSelectDistAttackEvent);
+    on<SelectMagicAttackEvent>(_onSelectMagicAttackEvent);
+    on<SelectTargetedCharacterEvent>(_onSelectTargetedCharacterEvent);
   }
 
   Future<void> _onInitializeFightEvent(InitializeFightEvent event, Emitter<FightState> emit) async {
@@ -66,15 +75,15 @@ class FightBloc extends Bloc<FightEvent, FightState> {
 
   Fight _createFightForTest(){
     Fight test =  Fight(name: "Combat 1", allies: [], enemies: []);
-    Character character1=Character(name: "Sam", strength: 13, dexterity: 15, constitution: 16, intelligence: 18, wisdom: 20, charisma: 22, hpMax: 100, hpCurrent: 100);
+    Character character1=Character(name: "Sam", strength: 13, dexterity: 15, constitution: 16, intelligence: 18, wisdom: 20, charisma: 22, hpMax: 100, hpCurrent: 100, ca: 10);
     _caracteristicService.initiativeThrow(character1);
-    Character character2=Character(name: "Félix", strength: 10, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 12, charisma: 10, hpMax: 50, hpCurrent: 30);
+    Character character2=Character(name: "Félix", strength: 10, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 12, charisma: 10, hpMax: 50, hpCurrent: 30, ca : 11);
     _caracteristicService.initiativeThrow(character2);
-    Character character3=Character(name: "Saroumane", strength: 11, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 8, hpMax: 70, hpCurrent: 7);
+    Character character3=Character(name: "Saroumane", strength: 11, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 8, hpMax: 70, hpCurrent: 7, ca : 13);
     _caracteristicService.initiativeThrow(character3);
-    Character character4=Character(name: "Sauron", strength: 10, dexterity: 7, constitution: 16, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 80, hpCurrent: 84);
+    Character character4=Character(name: "Sauron", strength: 10, dexterity: 7, constitution: 16, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 80, hpCurrent: 84, ca : 10);
     _caracteristicService.initiativeThrow(character4);
-    Character character5=Character(name: "Jacques", strength: 10, dexterity: 42, constitution: 10, intelligence: 10, wisdom: 10, charisma: 26, hpMax: 53, hpCurrent: 52);
+    Character character5=Character(name: "Jacques", strength: 10, dexterity: 42, constitution: 10, intelligence: 10, wisdom: 10, charisma: 26, hpMax: 53, hpCurrent: 52, ca : 15);
     _caracteristicService.initiativeThrow(character5);
 
     test.allies.add(character1);
@@ -92,6 +101,80 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     orderedList.addAll(_fight!.enemies);
     orderedList.sort((a, b) => a.initiative == null? 1 : b.initiative == null? -1 : b.initiative!.compareTo(a.initiative!));
     _fight?.orderedByInitiative = orderedList;
+  }
+
+  Future<void> _onSelectCharacterEvent(SelectCharacterEvent event, Emitter<FightState> emit) async {
+    emit(FightLoading());
+    _resetFightModeButtons();
+    _targetedCharacter = null;
+    if(event.character==null || event.character==_selectedCharacter){
+      _selectedCharacter = null;
+      emit(FightLoaded(_fight!));
+    }
+    else {
+      _selectedCharacter = event.character;
+      emit(FightLoadedWithSelectedCharacter(_fight!, _selectedCharacter!, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
+    }
+
+  }
+
+  Future<void> _onSelectCacAttackEvent(SelectCacAttackEvent event, Emitter<FightState> emit) async {
+    _distModeEnabled=false;
+    _magicModeEnabled=false;
+    if(!_cacModeEnabled){
+      _cacModeEnabled=true;
+    }
+    else{
+      _cacModeEnabled=false;
+      _targetedCharacter=null;
+    }
+    emit(FightLoadedWithSelectedCharacter(_fight!, _selectedCharacter!, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
+
+  }
+  Future<void> _onSelectDistAttackEvent(SelectDistAttackEvent event, Emitter<FightState> emit) async {
+    _cacModeEnabled=false;
+    _magicModeEnabled=false;
+    if(!_distModeEnabled){
+      _distModeEnabled=true;
+    }
+    else{
+      _distModeEnabled=false;
+      _targetedCharacter=null;
+    }
+    emit(FightLoadedWithSelectedCharacter(_fight!, _selectedCharacter!, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
+  }
+  Future<void> _onSelectMagicAttackEvent(SelectMagicAttackEvent event, Emitter<FightState> emit) async {
+    _cacModeEnabled=false;
+    _distModeEnabled=false;
+    if(!_magicModeEnabled){
+      _magicModeEnabled=true;
+    }
+    else{
+      _magicModeEnabled=false;
+      _targetedCharacter=null;
+    }
+    emit(FightLoadedWithSelectedCharacter(_fight!, _selectedCharacter!, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
+  }
+  Future<void> _onSelectTargetedCharacterEvent(SelectTargetedCharacterEvent event, Emitter<FightState> emit) async {
+    emit(FightLoading());
+    if(event.targetedCharacter==_selectedCharacter){
+      _selectedCharacter = null;
+      _targetedCharacter = null;
+      emit(FightLoaded(_fight!));
+    }
+    else if(event.targetedCharacter==null || event.targetedCharacter==_targetedCharacter){
+      _targetedCharacter = null;
+    }
+    else {
+      _targetedCharacter = event.targetedCharacter;
+    }
+    emit(FightLoadedWithSelectedCharacter(_fight!, _selectedCharacter!, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
+  }
+
+  void _resetFightModeButtons(){
+    _cacModeEnabled=false;
+    _distModeEnabled=false;
+    _magicModeEnabled=false;
   }
 
 }

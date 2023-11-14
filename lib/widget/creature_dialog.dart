@@ -18,7 +18,7 @@ class _CreatureDialogState extends State<CreatureDialog> {
   void initState() {
     super.initState();
     // Initialiser _currentCreature avec la créature passée ou créer une nouvelle instance
-    _currentCreature = widget.creature ?? Creature(wisdom: 0, strength: 0, dexterity: 0, constitution: 0, intelligence: 0, charisma: 0, diceHpNumber: 0, diceHpValue: 0, diceHpBonus: 0);
+    _currentCreature = widget.creature ?? Creature(wisdom: 0, strength: 0, dexterity: 0, constitution: 0, intelligence: 0, charisma: 0, diceHpNumber: 0, diceHpValue: 0, diceHpBonus: 0, ca: 0);
   }
 
   void _submitForm() {
@@ -163,6 +163,85 @@ class _CreatureDialogState extends State<CreatureDialog> {
                 ),
                   ),
                 ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child :
+                      TextFormField(
+                      initialValue: _currentCreature.ca.toString(),
+                      decoration: const InputDecoration(labelText: 'CA'),
+                      keyboardType: TextInputType.number,
+                      onSaved: (value) => _currentCreature.ca = int.tryParse(value ?? '') ?? 0,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Ce champ est requis.';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Veuillez entrer un nombre valide.';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child :
+                      TextFormField(
+                    initialValue: _currentCreature.diceHpNumber.toString(),
+                    decoration: const InputDecoration(labelText: 'Nbre Dés de vie'),
+                    keyboardType: TextInputType.number,
+                    onSaved: (value) => _currentCreature.diceHpNumber = int.tryParse(value ?? '') ?? 0,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ce champ est requis.';
+                      }
+                      if (int.tryParse(value) == null) {
+                        return 'Veuillez entrer un nombre valide.';
+                      }
+                      return null;
+                    },
+                  ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child :
+                    TextFormField(
+                      initialValue: _currentCreature.diceHpValue.toString(),
+                      decoration: const InputDecoration(labelText: 'Faces dés de vie'),
+                      keyboardType: TextInputType.number,
+                      onSaved: (value) => _currentCreature.diceHpValue = int.tryParse(value ?? '') ?? 0,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Ce champ est requis.';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Veuillez entrer un nombre valide.';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child :
+                    TextFormField(
+                      initialValue: _currentCreature.diceHpBonus.toString(),
+                      decoration: const InputDecoration(labelText: 'Pts vie additionnels'),
+                      keyboardType: TextInputType.number,
+                      onSaved: (value) => _currentCreature.diceHpBonus = int.tryParse(value ?? '') ?? 0,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Ce champ est requis.';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Veuillez entrer un nombre valide.';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ]
               ),
             ],
           ),

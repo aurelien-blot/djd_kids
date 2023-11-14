@@ -70,6 +70,7 @@ class CreaturesScreen extends StatelessWidget {
                       DataColumn(label: Text('Intelligence')),
                       DataColumn(label: Text('Sagesse')),
                       DataColumn(label: Text('Charisme')),
+                      DataColumn(label: Text('CA')),
                       DataColumn(label: Text('Vie')),
                     ],
                     rows: state.creatures.map((creature) => DataRow(
@@ -81,6 +82,7 @@ class CreaturesScreen extends StatelessWidget {
                         DataCell(Text(creature.intelligence.toString()), onTap: () => _addOrEditCreature(context, creature)),
                         DataCell(Text(creature.wisdom.toString()), onTap: () => _addOrEditCreature(context, creature)),
                         DataCell(Text(creature.charisma.toString()), onTap: () => _addOrEditCreature(context, creature)),
+                        DataCell(Text(creature.ca.toString()), onTap: () => _addOrEditCreature(context, creature)),
                         DataCell(Text(creature.hpDetails), onTap: () => _addOrEditCreature(context, creature)),
                       ],
                     )).toList(),

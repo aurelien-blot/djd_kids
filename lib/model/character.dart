@@ -12,6 +12,7 @@ class Character {
   int? initiative;
   int hpMax;
   int hpCurrent;
+  int ca;
 
   Character({
     required this.name,
@@ -25,6 +26,7 @@ class Character {
     required this.charisma,
     required this.hpMax,
     required this.hpCurrent,
+    required this.ca,
     this.initiative,
     this.id
   });
@@ -33,17 +35,18 @@ class Character {
     return {
       'id': id,
       'name': name,
-      'creatureName': creatureName??'',
-      'creatureName': creatureId??'',
+      'creatureName': creatureName,
+      'creatureName': creatureId,
       'strength' :strength,
       'dexterity' :dexterity,
       'constitution' :constitution,
       'intelligence' :intelligence,
       'wisdom' :wisdom,
       'charisma' :charisma,
-      'initiave' :initiative??'',
+      'initiative' :initiative,
       'hpMax' :hpMax,
       'hpCurrent' :hpCurrent,
+      'ca' :ca,
     };
   }
 
@@ -60,6 +63,7 @@ class Character {
     charisma = map['charisma']??0,
     hpMax = map['hpMax']??0,
     hpCurrent = map['hpCurrent']??0,
+    ca = map['ca']??0,
     initiative = map['initiative'];
 
 

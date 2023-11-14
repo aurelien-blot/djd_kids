@@ -249,6 +249,24 @@ class AddCharacterForm extends StatelessWidget {
                       Expanded(child :
                         TextFormField(
                           controller: context.read<CharacterFormBloc>().hpController,
+                          decoration: const InputDecoration(labelText: 'CA'),
+                          keyboardType: TextInputType.number,
+                          onSaved: (value) => newCharacter.hpMax = int.tryParse(value ?? '') ?? 0,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ce champ est requis.';
+                            }
+                            if (int.tryParse(value) == null) {
+                              return 'Veuillez entrer un nombre valide.';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(child :
+                        TextFormField(
+                          controller: context.read<CharacterFormBloc>().hpController,
                           decoration: const InputDecoration(labelText: 'Pts de Vie'),
                           keyboardType: TextInputType.number,
                           onSaved: (value) => newCharacter.hpMax = int.tryParse(value ?? '') ?? 0,
@@ -263,6 +281,7 @@ class AddCharacterForm extends StatelessWidget {
                           },
                         ),
                       ),
+
                     ]
                 ),
               ]

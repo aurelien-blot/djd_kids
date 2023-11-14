@@ -1,5 +1,6 @@
 import 'package:djd_kids/bloc/fight/fight_state.dart';
 import 'package:djd_kids/service/database_service.dart';
+import 'package:djd_kids/widget/action_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,6 +17,9 @@ import '../widget/loading_dialog.dart';
 class FightScreen extends StatelessWidget {
   final DatabaseService databaseService;
   final CharacterService _characterService = CharacterService();
+  Character? selectedCharacter;
+  Character? targetedCharacter;
+  bool isActionSelected = false;
 
   FightScreen({Key? key, required this.databaseService}) : super(key: key);
 
@@ -47,7 +51,7 @@ class FightScreen extends StatelessWidget {
             onPressed: () {
               _showAddCharacterModal(context, teamType);
             },
-            child: Text('Ajouter un ${teamType == TeamType.allies?'allié':'ennemi'}'),
+            child: Text(' Ajouter un ${teamType == TeamType.allies?'allié':'ennemi'}'),
           ),
         ],
       ),
@@ -55,13 +59,31 @@ class FightScreen extends StatelessWidget {
   }
 
   Widget _characterCard(BuildContext context, Character character) {
+    bool isCharacterSelected = selectedCharacter == character;
+    bool isTargetSelected = targetedCharacter == character;
     String title = character.name;
     if (character.creatureName!=null) {
       title += ' (${character.creatureName})';
     }
-    return Card(
 
+    Color? cardColor;
+    if(isCharacterSelected){
+      cardColor = Colors.blue[100];
+    }
+    else if(isTargetSelected){
+      cardColor = Colors.red[100];
+    }
+    return Card(
+      color: cardColor,
       child: ListTile(
+        onTap: () {
+          if(isActionSelected && selectedCharacter!=null && selectedCharacter!=character){
+            context.read<FightBloc>().add(SelectTargetedCharacterEvent(character));
+          }
+          else{
+            context.read<FightBloc>().add(SelectCharacterEvent(character));
+          }
+        },
         leading: const CircleAvatar(
           backgroundImage: AssetImage('assets/characters/anonym.jpg'),
         ),
@@ -73,7 +95,14 @@ class FightScreen extends StatelessWidget {
                 Text('CA: ${character.ca}'),*/
                 Padding(
                 padding: const EdgeInsets.all(8.0),
-                  child:Text('PV: ${character.hpCurrent}/${character.hpMax}')
+                  child:Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children :[
+                        Text('Init : ${character.initiative}'),
+                        Text('CA : ${character.ca}'),
+                        Text('PV : ${character.hpCurrent}/${character.hpMax}')
+                      ]
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -118,6 +147,15 @@ class FightScreen extends StatelessWidget {
         },
         child: BlocConsumer<FightBloc, FightState>(
             listener: (context, state) {
+              if (state is FightLoadedWithSelectedCharacter) {
+                selectedCharacter = state.selectedCharacter;
+                targetedCharacter = state.targetedCharacter;
+                isActionSelected = state.isActionSelected;
+              }
+              else if (state is FightLoaded) {
+                selectedCharacter = null;
+                targetedCharacter = null;
+              }
             },
             builder: (context, state) {
               final fightBloc = context.read<FightBloc>();
@@ -183,10 +221,20 @@ class FightScreen extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     buildTeamZone(context, TeamType.allies, state.fight.allies),
-                                    const Expanded(
-                                      flex: 1,
-                                      child: SizedBox.shrink(),
-                                    ),
+                                    if(state is  FightLoadedWithSelectedCharacter)...[
+                                      Expanded(
+                                        flex: 1,
+                                        child: ActionPanel(selectedCharacter: state.selectedCharacter,
+                                            cacModeEnabled : state.cacModeEnabled, distModeEnabled : state.distModeEnabled,
+                                            magicModeEnabled : state.magicModeEnabled, diceRollButtonEnabled : state.targetedCharacter!=null && state.isActionSelected),
+                                      ),
+                                    ]
+                                    else ...[
+                                      const Expanded(
+                                        flex: 1,
+                                        child: SizedBox.shrink(),
+                                      ),
+                                    ],
                                     buildTeamZone(context, TeamType.enemies, state.fight.enemies),
                                   ]
                                 ),
