@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../../model/character.dart';
 import '../../model/creature.dart';
 import '../../model/enums.dart';
+import '../../model/weapon.dart';
 
 abstract class CharacterFormEvent extends Equatable{}
 
@@ -33,4 +34,20 @@ class SelectCreature extends CharacterFormEvent {
 
   @override
   List<Object?> get props => [creature];
+}
+
+class SelectCacWeapon extends CharacterFormEvent {
+  final Weapon? weapon;
+  SelectCacWeapon(this.weapon);
+
+  @override
+  List<Object?> get props => [weapon];
+}
+
+class SelectDistWeapon extends CharacterFormEvent {
+  final Weapon? weapon;
+  SelectDistWeapon(this.weapon);
+
+  @override
+  List<Object?> get props => [weapon];
 }

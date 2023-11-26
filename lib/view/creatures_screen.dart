@@ -62,6 +62,7 @@ class CreaturesScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: DataTable(
+
                     columns: const [
                       DataColumn(label: Text('Créature')),
                       DataColumn(label: Text('Force')),
@@ -70,6 +71,7 @@ class CreaturesScreen extends StatelessWidget {
                       DataColumn(label: Text('Intelligence')),
                       DataColumn(label: Text('Sagesse')),
                       DataColumn(label: Text('Charisme')),
+                      DataColumn(label: Text('CAC Carac')),
                       DataColumn(label: Text('CA')),
                       DataColumn(label: Text('Vie')),
                     ],
@@ -83,6 +85,7 @@ class CreaturesScreen extends StatelessWidget {
                         DataCell(Text(creature.wisdom.toString()), onTap: () => _addOrEditCreature(context, creature)),
                         DataCell(Text(creature.charisma.toString()), onTap: () => _addOrEditCreature(context, creature)),
                         DataCell(Text(creature.ca.toString()), onTap: () => _addOrEditCreature(context, creature)),
+                        DataCell(Text(creature.cacAbility.name), onTap: () => _addOrEditCreature(context, creature)),
                         DataCell(Text(creature.hpDetails), onTap: () => _addOrEditCreature(context, creature)),
                       ],
                     )).toList(),

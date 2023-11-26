@@ -10,6 +10,7 @@ import '../bloc/character_form/character_form_event.dart';
 import '../bloc/character_form/character_form_state.dart';
 import '../model/character.dart';
 import '../model/creature.dart';
+import '../model/weapon.dart';
 import '../service/database_service.dart';
 import 'buttons/validation_button.dart';
 import 'incorrect_state_screen.dart';
@@ -135,6 +136,7 @@ class AddCharacterForm extends StatelessWidget {
                     ),
                   ]
                 ),
+                const Padding(padding: EdgeInsets.only(bottom: 14)),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -282,6 +284,82 @@ class AddCharacterForm extends StatelessWidget {
                         ),
                       ),
 
+                    ]
+                ),
+                const Padding(padding: EdgeInsets.only(bottom: 14)),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child :
+                        DropdownButton<Weapon?>(
+                          items: state.cacWeapons.map((Weapon item) {
+                            return DropdownMenuItem<Weapon>(
+                              value: item,
+                              child: Builder(
+                                  builder: (BuildContext context) {
+                                    return Text(item.weaponFullLabel?? '');
+                                  }
+                              ),
+                            );
+                          }).toList(),
+                          value: newCharacter.cacWeapon,
+                          onChanged: (Weapon? value) {
+                            context.read<CharacterFormBloc>().add(SelectCacWeapon(value));
+                          },
+                          dropdownColor: Colors.grey[400],
+                          hint: const Text("Choisir une arme de corps à corps"),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child:
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            context.read<CharacterFormBloc>().add(SelectDistWeapon(null));
+                          },
+                        ),
+                      )
+                    ]
+                ),
+                const Padding(padding: EdgeInsets.only(bottom: 14)),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child :
+                        DropdownButton<Weapon?>(
+                          items: state.distWeapons.map((Weapon item) {
+                            return DropdownMenuItem<Weapon>(
+                              value: item,
+                              child: Builder(
+                                  builder: (BuildContext context) {
+                                    return Text(item.weaponFullLabel?? '');
+                                  }
+                              ),
+                            );
+                          }).toList(),
+                          value: newCharacter.distWeapon,
+                          onChanged: (Weapon? value) {
+                            context.read<CharacterFormBloc>().add(SelectDistWeapon(value));
+                          },
+                          dropdownColor: Colors.grey[400],
+                          hint: const Text("Choisir une arme de distance"),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child:
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            context.read<CharacterFormBloc>().add(SelectDistWeapon(null));
+                          },
+                        ),
+                      )
                     ]
                 ),
               ]

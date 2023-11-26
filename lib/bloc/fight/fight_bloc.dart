@@ -1,27 +1,28 @@
-import 'package:djd_kids/service/character_service.dart';
+import 'package:djd_kids/model/weapon.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
+import '../../constants.dart';
 import '../../model/character.dart';
 import '../../model/enums.dart';
 import '../../model/fight.dart';
 import '../../service/database_service.dart';
-import '../../service/caracteristic_service.dart';
+import '../../service/ability_service.dart';
 import 'fight_event.dart';
 import 'fight_state.dart';
 
 class FightBloc extends Bloc<FightEvent, FightState> {
   final DatabaseService databaseService;
+  final AbilityService abilityService;
 
   Fight? _fight;
-  final CaracteristicService _caracteristicService = CaracteristicService();
   Character? _selectedCharacter;
-  Character? _targetedCharacter=null;
+  Character? _targetedCharacter;
   bool _cacModeEnabled=false;
   bool _distModeEnabled=false;
   bool _magicModeEnabled=false;
 
-  FightBloc(this.databaseService) : super(FightLoading()) {
+  FightBloc(this.databaseService, this.abilityService) : super(FightLoading()) {
     on<InitializeFightEvent>(_onInitializeFightEvent);
     on<CreateFightEvent>(_onCreateFightEvent);
     on<AddCharacterEvent>(_onAddCharacterEvent);
@@ -30,12 +31,13 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     on<SelectDistAttackEvent>(_onSelectDistAttackEvent);
     on<SelectMagicAttackEvent>(_onSelectMagicAttackEvent);
     on<SelectTargetedCharacterEvent>(_onSelectTargetedCharacterEvent);
+    on<OpenAttackDialogEvent>(_onOpenAttackDialogEvent);
   }
 
   Future<void> _onInitializeFightEvent(InitializeFightEvent event, Emitter<FightState> emit) async {
     emit(FightLoading());
     //TODO A RETIRER APRES TEST
-    _fight = _createFightForTest();
+    _fight = await _createFightForTest();
 
     if(_fight == null){
       emit(NoFightState());
@@ -61,7 +63,7 @@ class FightBloc extends Bloc<FightEvent, FightState> {
       return;
     }
     Character newCharacter = event.character;
-    _caracteristicService.initiativeThrow(newCharacter);
+    abilityService.initiativeThrow(newCharacter);
 
     if(event.teamType == TeamType.allies) {
       _fight!.allies.add(newCharacter);
@@ -73,18 +75,32 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     emit(FightLoaded(_fight!));
   }
 
-  Fight _createFightForTest(){
+  Future<Fight> _createFightForTest() async{
     Fight test =  Fight(name: "Combat 1", allies: [], enemies: []);
-    Character character1=Character(name: "Sam", strength: 13, dexterity: 15, constitution: 16, intelligence: 18, wisdom: 20, charisma: 22, hpMax: 100, hpCurrent: 100, ca: 10);
-    _caracteristicService.initiativeThrow(character1);
-    Character character2=Character(name: "Félix", strength: 10, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 12, charisma: 10, hpMax: 50, hpCurrent: 30, ca : 11);
-    _caracteristicService.initiativeThrow(character2);
-    Character character3=Character(name: "Saroumane", strength: 11, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 8, hpMax: 70, hpCurrent: 7, ca : 13);
-    _caracteristicService.initiativeThrow(character3);
-    Character character4=Character(name: "Sauron", strength: 10, dexterity: 7, constitution: 16, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 80, hpCurrent: 84, ca : 10);
-    _caracteristicService.initiativeThrow(character4);
-    Character character5=Character(name: "Jacques", strength: 10, dexterity: 42, constitution: 10, intelligence: 10, wisdom: 10, charisma: 26, hpMax: 53, hpCurrent: 52, ca : 15);
-    _caracteristicService.initiativeThrow(character5);
+
+    List<Weapon> cacWeapons = await databaseService.getWeaponsByType(WeaponType.MELEE);
+    List<Weapon> distWeapons = await databaseService.getWeaponsByType(WeaponType.DISTANCE);
+
+    Character character1= await databaseService.getCharacterById(7);
+    character1.cacWeapon = (cacWeapons[0]);
+    character1.distWeapon = (distWeapons[0]);
+    abilityService.initiativeThrow(character1);
+    Character character2=Character(name: "Félix", strength: 10, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 12, charisma: 10, hpMax: 50, hpCurrent: 30, ca : 11, cacAbility: CacAbility.DEX);
+    character2.cacWeapon = (cacWeapons[1]);
+    character2.distWeapon = (distWeapons[1]);
+    abilityService.initiativeThrow(character2);
+    Character character3=Character(name: "Saroumane", strength: 11, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 8, hpMax: 70, hpCurrent: 7, ca : 13, cacAbility: CacAbility.FOR);
+    character3.cacWeapon = (cacWeapons[2]);
+    character3.distWeapon = (distWeapons[2]);
+    abilityService.initiativeThrow(character3);
+    Character character4=Character(name: "Sauron", strength: 10, dexterity: 7, constitution: 16, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 80, hpCurrent: 84, ca : 10, cacAbility: CacAbility.FOR);
+    character4.cacWeapon = (cacWeapons[3]);
+    character4.distWeapon = (distWeapons[3]);
+    abilityService.initiativeThrow(character4);
+    Character character5=Character(name: "Jacques", strength: 10, dexterity: 42, constitution: 10, intelligence: 10, wisdom: 10, charisma: 26, hpMax: 53, hpCurrent: 52, ca : 15, cacAbility: CacAbility.DEX);
+    character5.cacWeapon = (cacWeapons[4]);
+    character5.distWeapon = (distWeapons[4]);
+    abilityService.initiativeThrow(character5);
 
     test.allies.add(character1);
     test.allies.add(character2);
@@ -107,7 +123,7 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     emit(FightLoading());
     _resetFightModeButtons();
     _targetedCharacter = null;
-    if(event.character==null || event.character==_selectedCharacter){
+    if(event.character==_selectedCharacter){
       _selectedCharacter = null;
       emit(FightLoaded(_fight!));
     }
@@ -162,7 +178,7 @@ class FightBloc extends Bloc<FightEvent, FightState> {
       _targetedCharacter = null;
       emit(FightLoaded(_fight!));
     }
-    else if(event.targetedCharacter==null || event.targetedCharacter==_targetedCharacter){
+    else if(event.targetedCharacter==_targetedCharacter){
       _targetedCharacter = null;
     }
     else {
@@ -176,5 +192,11 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     _distModeEnabled=false;
     _magicModeEnabled=false;
   }
+
+  void _onOpenAttackDialogEvent(OpenAttackDialogEvent event, Emitter<FightState> emit) {
+    emit(FightLoading());
+    emit(OpenAttackDialogState(_fight!, _selectedCharacter!, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
+  }
+
 
 }

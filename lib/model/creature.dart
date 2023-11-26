@@ -1,3 +1,5 @@
+import '../constants.dart';
+
 class Creature {
   int? id;
   String? name;
@@ -11,6 +13,7 @@ class Creature {
   int diceHpValue;
   int diceHpBonus;
   int ca;
+  CacAbility cacAbility;
 
   String get hpDetails => '${diceHpNumber}d$diceHpValue+$diceHpBonus';
 
@@ -26,13 +29,14 @@ class Creature {
     required this.diceHpValue,
     required this.diceHpBonus,
     required this.ca,
+    required this.cacAbility,
     this.id
   });
 
   static Creature initCreature(String name){
     return Creature(name: name, strength: 0, dexterity: 0,
         constitution: 0, intelligence: 0, wisdom: 0, charisma: 0, diceHpNumber: 0,
-        diceHpValue: 0, diceHpBonus: 0, ca: 0);
+        diceHpValue: 0, diceHpBonus: 0, ca: 0, cacAbility: CacAbility.FOR);
   }
 
   Map<String, dynamic> toMap() {
@@ -48,6 +52,7 @@ class Creature {
       'diceHpNumber' :diceHpNumber,
       'diceHpValue' :diceHpValue,
       'diceHpBonus' :diceHpBonus,
+      'cacAbility' :cacAbility.name,
       'ca' :ca,
     };
   }
@@ -64,6 +69,7 @@ class Creature {
     diceHpNumber = map['diceHpNumber']??0,
     diceHpValue = map['diceHpValue']??0,
     diceHpBonus = map['diceHpBonus']??0,
+    cacAbility = map['cacAbility'] != null? CacAbility.values.firstWhere((element) => element.name == map['cacAbility'],orElse: () => CacAbility.FOR): CacAbility.FOR,
     ca = map['ca']??0
   ;
 }

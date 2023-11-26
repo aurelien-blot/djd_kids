@@ -1,3 +1,7 @@
+import 'package:djd_kids/model/weapon.dart';
+
+import '../constants.dart';
+
 class Character {
   int? id;
   String name;
@@ -13,6 +17,11 @@ class Character {
   int hpMax;
   int hpCurrent;
   int ca;
+  CacAbility cacAbility;
+  Weapon? cacWeapon;
+  int? cacWeaponId;
+  Weapon? distWeapon;
+  int? distWeaponId;
 
   Character({
     required this.name,
@@ -27,8 +36,13 @@ class Character {
     required this.hpMax,
     required this.hpCurrent,
     required this.ca,
+    required this.cacAbility,
     this.initiative,
-    this.id
+    this.id,
+    this.cacWeapon,
+    this.distWeapon,
+    this.cacWeaponId,
+    this.distWeaponId
   });
 
   Map<String, dynamic> toMap() {
@@ -36,7 +50,7 @@ class Character {
       'id': id,
       'name': name,
       'creatureName': creatureName,
-      'creatureName': creatureId,
+      'creatureId': creatureId,
       'strength' :strength,
       'dexterity' :dexterity,
       'constitution' :constitution,
@@ -47,6 +61,11 @@ class Character {
       'hpMax' :hpMax,
       'hpCurrent' :hpCurrent,
       'ca' :ca,
+      'cacAbility' :cacAbility.name,
+      'cacWeaponId' :cacWeapon?.id,
+      'distWeaponId' :distWeapon?.id,
+      //'cacWeapon' : cacWeapon?.toMap(),
+      //'distWeapon' : distWeapon?.toMap(),
     };
   }
 
@@ -64,7 +83,10 @@ class Character {
     hpMax = map['hpMax']??0,
     hpCurrent = map['hpCurrent']??0,
     ca = map['ca']??0,
+    cacAbility = map['cacAbility']!=null?CacAbility.values.where((element) => element.name == map['cacAbility']).first:CacAbility.FOR,
+    cacWeaponId = map['cacWeaponId'],
+    distWeaponId = map['distWeaponId'],
+    //cacWeapon = map['cacWeapon']!=null?Weapon.fromMap(map['cacWeapon']):null,
+    //distWeapon = map['distWeapon']!=null?Weapon.fromMap(map['distWeapon']):null,
     initiative = map['initiative'];
-
-
 }

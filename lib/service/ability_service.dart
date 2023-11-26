@@ -1,9 +1,10 @@
 import 'package:djd_kids/model/character.dart';
 import 'package:djd_kids/model/creature.dart';
 
+import '../constants.dart';
 import 'dice_service.dart';
 
-class CaracteristicService {
+class AbilityService {
 
   final DiceService _diceService = DiceService();
 
@@ -17,17 +18,30 @@ class CaracteristicService {
   }
 
   int dexterityTest(Character character) {
-    return caracteristicTest(character.dexterity);
+    return abilityTest(character.dexterity);
   }
 
-  int caracteristicTest(int carac) {
+  int abilityTest(int carac) {
     int modifier = getModifier(carac);
     int diceResult = _diceService.rollDice(1, 20);
     return diceResult + modifier;
   }
 
-  int getModifier(int dexterity) {
-    return (dexterity - 10).isEven ? (dexterity - 10) ~/ 2 : (dexterity - 11) ~/ 2;
+  int getModifier(int ability) {
+    return (ability - 10).isEven ? (ability - 10) ~/ 2 : (ability - 11) ~/ 2;
+  }
+
+  AttackResult isAttackSuccessful(int mJModifier, int dice, int abilityModifer, int ca) {
+    if(dice == 1){
+      return AttackResult.CRITICAL_FAIL;
+    }
+    if(dice == 20){
+      return AttackResult.CRITICAL_SUCCESS;
+    }
+    if((mJModifier+dice+abilityModifer) >= ca){
+      return AttackResult.SUCCESS;
+    }
+    return AttackResult.FAIL;
   }
 
 

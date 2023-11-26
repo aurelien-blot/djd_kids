@@ -45,3 +45,11 @@ class FightError extends FightState with EquatableMixin {
   @override
   List<Object> get props => [message??'Erreur inconnue'];
 }
+
+class OpenAttackDialogState extends FightLoadedWithSelectedCharacter {
+
+  OpenAttackDialogState(super.fight, super.selectedCharacter, super.cacModeEnabled, super.distModeEnabled, super.magicModeEnabled, super.targetedCharacter);
+
+  @override
+  List<Object> get props => [];
+}

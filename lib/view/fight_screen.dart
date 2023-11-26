@@ -1,6 +1,7 @@
 import 'package:djd_kids/bloc/fight/fight_state.dart';
 import 'package:djd_kids/service/database_service.dart';
 import 'package:djd_kids/widget/action_panel.dart';
+import 'package:djd_kids/widget/attack_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,6 +10,7 @@ import '../bloc/fight/fight_event.dart';
 import '../model/character.dart';
 import '../model/enums.dart';
 import '../model/fight.dart';
+import '../service/ability_service.dart';
 import '../service/character_service.dart';
 import '../widget/add_character_form.dart';
 import '../widget/initiative_band.dart';
@@ -17,6 +19,7 @@ import '../widget/loading_dialog.dart';
 class FightScreen extends StatelessWidget {
   final DatabaseService databaseService;
   final CharacterService _characterService = CharacterService();
+  final AbilityService abilityService = AbilityService();
   Character? selectedCharacter;
   Character? targetedCharacter;
   bool isActionSelected = false;
@@ -32,6 +35,16 @@ class FightScreen extends StatelessWidget {
     if (result != null) {
       fightBloc.add(AddCharacterEvent(teamType, result));
     }
+  }
+
+  void _openAttackDialog(BuildContext context) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AttackDialog(abilityService: abilityService, attacker: selectedCharacter!, defender: targetedCharacter!);
+      },
+    );
   }
 
   Expanded buildTeamZone(BuildContext context, TeamType teamType, List<Character> team) {
@@ -143,11 +156,14 @@ class FightScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) {
-          return FightBloc(databaseService)..add(InitializeFightEvent());
+          return FightBloc(databaseService, abilityService)..add(InitializeFightEvent());
         },
         child: BlocConsumer<FightBloc, FightState>(
             listener: (context, state) {
-              if (state is FightLoadedWithSelectedCharacter) {
+              if(state is OpenAttackDialogState){
+                _openAttackDialog(context);
+              }
+              else if (state is FightLoadedWithSelectedCharacter) {
                 selectedCharacter = state.selectedCharacter;
                 targetedCharacter = state.targetedCharacter;
                 isActionSelected = state.isActionSelected;

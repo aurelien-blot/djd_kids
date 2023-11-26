@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants.dart';
 import '../model/creature.dart';
 
 class CreatureDialog extends StatefulWidget {
@@ -18,7 +19,7 @@ class _CreatureDialogState extends State<CreatureDialog> {
   void initState() {
     super.initState();
     // Initialiser _currentCreature avec la créature passée ou créer une nouvelle instance
-    _currentCreature = widget.creature ?? Creature(wisdom: 0, strength: 0, dexterity: 0, constitution: 0, intelligence: 0, charisma: 0, diceHpNumber: 0, diceHpValue: 0, diceHpBonus: 0, ca: 0);
+    _currentCreature = widget.creature ?? Creature(wisdom: 0, strength: 0, dexterity: 0, constitution: 0, intelligence: 0, charisma: 0, diceHpNumber: 0, diceHpValue: 0, diceHpBonus: 0, ca: 0, cacAbility: CacAbility.FOR);
   }
 
   void _submitForm() {

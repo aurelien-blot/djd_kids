@@ -53,3 +53,7 @@ class SelectDistAttackEvent extends FightEvent {
 class SelectMagicAttackEvent extends FightEvent {
   SelectMagicAttackEvent();
 }
+
+class OpenAttackDialogEvent extends FightEvent {
+  OpenAttackDialogEvent();
+}
