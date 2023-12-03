@@ -21,4 +21,12 @@ class CharacterService {
     return Character(name: '',strength: 0, dexterity: 0, constitution: 0, intelligence: 0, wisdom: 0, charisma: 0, hpMax: 0, hpCurrent: 0, ca: 0, cacAbility: CacAbility.FOR);
   }
 
+  Character reduceHp(Character character, int hpToReduce){
+    character.hpCurrent = character.hpCurrent - hpToReduce;
+    if(character.hpCurrent < 0){
+      character.hpCurrent = 0;
+    }
+    return character;
+  }
+
 }

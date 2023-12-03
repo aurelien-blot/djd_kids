@@ -46,3 +46,11 @@ class ResolveTouchDiceEvent extends AttackDialogEvent {
   @override
   List<Object> get props => [];
 }
+
+class ResolveDegatsDiceEvent extends AttackDialogEvent {
+  int degatsDiceResult;
+  ResolveDegatsDiceEvent(this.degatsDiceResult);
+
+  @override
+  List<Object> get props => [degatsDiceResult];
+}

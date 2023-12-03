@@ -44,6 +44,10 @@ class ActionPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color distColor = Colors.grey;
+    if(selectedCharacter.distWeapon!=null){
+      distColor = !isActionSelected?Colors.blue:distModeEnabled?Colors.red:Colors.grey;
+    }
     return Padding(padding: const EdgeInsets.fromLTRB(0,20,0,20),
       child : Align(
         alignment: Alignment.topCenter,
@@ -88,18 +92,20 @@ class ActionPanel extends StatelessWidget {
                       )
                     ),
                     FloatingActionButton(
-                      backgroundColor: !isActionSelected?Colors.blue:distModeEnabled?Colors.red:Colors.grey,
+                      backgroundColor: distColor,
                       onPressed: () {
-                        _onRangedAttack(context);
+                        if(selectedCharacter.distWeapon!=null){
+                          _onRangedAttack(context);
+                        }
                       },
                       child: const SvgIcon(
                         path: 'assets/icons/bow.svg',
                       )
                     ),
                      FloatingActionButton(
-                      backgroundColor: !isActionSelected?Colors.blue:magicModeEnabled?Colors.red:Colors.grey,
+                      backgroundColor: Colors.grey,//!isActionSelected?Colors.blue:magicModeEnabled?Colors.red:Colors.grey,
                       onPressed: () {
-                        _onMagicAttack(context);
+                        //_onMagicAttack(context);
                       },
                       child: const SvgIcon(
                         path: 'assets/icons/spell.svg',

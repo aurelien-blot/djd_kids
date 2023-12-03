@@ -57,3 +57,11 @@ class SelectMagicAttackEvent extends FightEvent {
 class OpenAttackDialogEvent extends FightEvent {
   OpenAttackDialogEvent();
 }
+
+class ResolveAttackEvent extends FightEvent {
+  final int totalDegats;
+  ResolveAttackEvent(this.totalDegats);
+
+  @override
+  List<Object> get props => [totalDegats];
+}

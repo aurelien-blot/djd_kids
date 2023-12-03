@@ -1,4 +1,5 @@
 import 'package:djd_kids/bloc/fight/fight_state.dart';
+import 'package:djd_kids/constants.dart';
 import 'package:djd_kids/service/database_service.dart';
 import 'package:djd_kids/widget/action_panel.dart';
 import 'package:djd_kids/widget/attack_dialog.dart';
@@ -18,31 +19,41 @@ import '../widget/loading_dialog.dart';
 
 class FightScreen extends StatelessWidget {
   final DatabaseService databaseService;
-  final CharacterService _characterService = CharacterService();
+  final CharacterService characterService;
   final AbilityService abilityService = AbilityService();
   Character? selectedCharacter;
   Character? targetedCharacter;
   bool isActionSelected = false;
 
-  FightScreen({Key? key, required this.databaseService}) : super(key: key);
+  FightScreen({Key? key, required this.databaseService, required this.characterService}) : super(key: key);
 
   void _showAddCharacterModal(BuildContext context, TeamType teamType) async{
     final FightBloc fightBloc = context.read<FightBloc>();
     final result = await showDialog<Character>(
       context: context,
-      builder: (ctx) => AddCharacterForm(teamType: teamType, databaseService: databaseService, characterService: _characterService),
+      builder: (ctx) => AddCharacterForm(teamType: teamType, databaseService: databaseService, characterService: characterService),
     );
     if (result != null) {
       fightBloc.add(AddCharacterEvent(teamType, result));
     }
   }
 
-  void _openAttackDialog(BuildContext context) async {
+  void _openAttackDialog(BuildContext context, OpenAttackDialogState state) async {
+    AttackType attackType = AttackType.UNKNOW;
+    if(state.cacModeEnabled){
+      attackType = AttackType.CAC;
+    }
+    else if(state.distModeEnabled){
+      attackType = AttackType.RANGED;
+    }
+    else if(state.magicModeEnabled){
+      attackType = AttackType.MAGIC;
+    }
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
-        return AttackDialog(abilityService: abilityService, attacker: selectedCharacter!, defender: targetedCharacter!);
+        return AttackDialog(fightBloc:context.read<FightBloc>(), abilityService: abilityService, attacker: selectedCharacter!, defender: targetedCharacter!, attackType: attackType);
       },
     );
   }
@@ -97,8 +108,15 @@ class FightScreen extends StatelessWidget {
             context.read<FightBloc>().add(SelectCharacterEvent(character));
           }
         },
-        leading: const CircleAvatar(
-          backgroundImage: AssetImage('assets/characters/anonym.jpg'),
+        leading: Stack(
+          alignment: Alignment.center,
+          children: [
+            const CircleAvatar(
+              backgroundImage: AssetImage('assets/characters/anonym.jpg'),
+            ),
+            if (character.isDead) // Affiche une croix rouge si le personnage est mort
+              const Icon(Icons.cancel, color: Colors.red, size: 30),
+          ],
         ),
         title: Text(title),
         subtitle:
@@ -156,12 +174,12 @@ class FightScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) {
-          return FightBloc(databaseService, abilityService)..add(InitializeFightEvent());
+          return FightBloc(databaseService, abilityService, characterService)..add(InitializeFightEvent());
         },
         child: BlocConsumer<FightBloc, FightState>(
             listener: (context, state) {
               if(state is OpenAttackDialogState){
-                _openAttackDialog(context);
+                _openAttackDialog(context, state);
               }
               else if (state is FightLoadedWithSelectedCharacter) {
                 selectedCharacter = state.selectedCharacter;

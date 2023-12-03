@@ -10,6 +10,7 @@ class AttackDialogBloc extends Bloc<AttackDialogEvent, AttackDialogState> {
   final Character defender;
   final Character attacker;
   final AbilityService abilityService;
+  final AttackType attackType;
 
   AttackResult? _attackResult;
   int _modifier = 0;
@@ -18,20 +19,28 @@ class AttackDialogBloc extends Bloc<AttackDialogEvent, AttackDialogState> {
   final List<int> _diceFacesList = List.generate(20, (index) => index);
   CacAbility _cacAbility = CacAbility.FOR;
   int _abilityModifier = 0;
+  int _totalDegats = 0;
 
-  AttackDialogBloc(this.abilityService, this.attacker, this.defender) : super(AttackDialogLoading()) {
+  AttackDialogBloc(this.abilityService, this.attacker, this.defender, this.attackType) : super(AttackDialogLoading()) {
     on<InitializeAttackDialogEvent>(_onInitializeAttackDialogEvent);
     on<UpdateMJModifierEvent>(_onUpdateMJModifierEvent);
     on<UpdateCacAbilityEvent>(_onUpdateCacAbilityEvent);
     on<UpdateTouchDiceResultEvent>(_onUpdateTouchDiceResultEvent);
     on<ResolveTouchDiceEvent>(_onResolveTouchDiceEvent);
+    on<ResolveDegatsDiceEvent>(_onResolveDegatsDiceEvent);
 
   }
 
   Future<void> _onInitializeAttackDialogEvent(InitializeAttackDialogEvent event, Emitter<AttackDialogState> emit) async {
     emit(AttackDialogLoading());
     try {
-      _cacAbility = attacker.cacAbility;
+      if(attackType==AttackType.RANGED){
+        _cacAbility = CacAbility.DEX;
+      }
+      else{
+        _cacAbility = attacker.cacAbility;
+      }
+
       _defineAbilityModifier();
       emit(AttackDialogLoaded(_modifier, _cacAbility, _diceFacesList,_modifierList,  _touchDiceResult, _abilityModifier));
     } catch (e) {
@@ -61,6 +70,7 @@ class AttackDialogBloc extends Bloc<AttackDialogEvent, AttackDialogState> {
       emit(AttackDialogLoaded(_modifier, _cacAbility, _diceFacesList,_modifierList,  _touchDiceResult, _abilityModifier));
   }
   void _onUpdateTouchDiceResultEvent(UpdateTouchDiceResultEvent event, Emitter<AttackDialogState> emit) async {
+      emit(AttackDialogLoading());
       try{
         _touchDiceResult = int.tryParse(event.touchDiceResultS);
         emit(AttackDialogLoaded(_modifier, _cacAbility, _diceFacesList,_modifierList,  _touchDiceResult, _abilityModifier));
@@ -74,5 +84,10 @@ class AttackDialogBloc extends Bloc<AttackDialogEvent, AttackDialogState> {
       emit(AttackDialogLoading());
       _attackResult = abilityService.isAttackSuccessful(_modifier, _touchDiceResult!, _abilityModifier, defender.ca);
       emit(DiceThrowedState(_modifier, _cacAbility, _diceFacesList,_modifierList,  _touchDiceResult, _abilityModifier, _attackResult!));
+  }
+  void _onResolveDegatsDiceEvent(ResolveDegatsDiceEvent event, Emitter<AttackDialogState> emit) async {
+      emit(AttackDialogLoading());
+      _totalDegats = event.degatsDiceResult;
+      emit(FinalResultState(_modifier, _cacAbility, _diceFacesList,_modifierList,  _touchDiceResult, _abilityModifier, _totalDegats));
   }
 }

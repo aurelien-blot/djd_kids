@@ -17,3 +17,10 @@ enum AttackResult {
   FAIL,
   CRITICAL_FAIL;
 }
+
+enum AttackType {
+  CAC,
+  RANGED,
+  MAGIC,
+  UNKNOW;
+}

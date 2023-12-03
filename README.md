@@ -14,3 +14,11 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## TODO
+- Couleur selon le niveau de vie
+- Ajout de la possibilité de modifier les caractéristiques
+- affichage des armes des persos
+- Sauvegarde d'un combat 
+- sauvegarde des combats en fonction de leur évolution
+- ne pas sélectionner un mort

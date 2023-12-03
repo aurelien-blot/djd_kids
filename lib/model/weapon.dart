@@ -12,9 +12,6 @@ class Weapon {
 
   String get degatsMinDetails {
     String details = '${diceDegatsNumber}d$diceDegatsValue';
-    if(diceDegatsBonus>0) {
-      details += '+$diceDegatsBonus';
-    }
     return details;
   }
 

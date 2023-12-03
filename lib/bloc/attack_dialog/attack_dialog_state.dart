@@ -32,6 +32,13 @@ class DiceThrowedState extends AttackDialogLoaded {
   @override
   List<Object> get props => [modifier, cacAbility, diceFacesList, modifierList, abilityModifier, attackResult];
 }
+class FinalResultState extends AttackDialogLoaded {
+  final int totalDegats;
+  FinalResultState(int modifier, CacAbility cacAbility, List<int> diceFacesList, List<int> modifierList, int? touchDiceResult, int abilityModifier, this.totalDegats) : super(modifier, cacAbility, diceFacesList, modifierList, touchDiceResult, abilityModifier);
+
+  @override
+  List<Object> get props => [modifier, cacAbility, diceFacesList, modifierList, abilityModifier, totalDegats];
+}
 
 class AttackDialogError extends AttackDialogState with EquatableMixin {
   final String? message;

@@ -23,6 +23,8 @@ class Character {
   Weapon? distWeapon;
   int? distWeaponId;
 
+  bool get isDead => hpCurrent <= 0;
+
   Character({
     required this.name,
     this.creatureName,

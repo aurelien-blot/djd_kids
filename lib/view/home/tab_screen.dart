@@ -1,6 +1,7 @@
 import 'package:djd_kids/bloc/fight/fight_bloc.dart';
 import 'package:djd_kids/bloc/weapon/weapons_bloc.dart';
 import 'package:djd_kids/service/ability_service.dart';
+import 'package:djd_kids/service/character_service.dart';
 import 'package:djd_kids/widget/loading_dialog.dart';
 import 'package:djd_kids/widget/svg_icon.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class TabScreen extends StatelessWidget {
   static const String _titleLabel='D&D Utility';
   final DatabaseService databaseService = DatabaseService.instance;
   final AbilityService abilityService = AbilityService();
+  final CharacterService characterService = CharacterService();
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +53,8 @@ class TabScreen extends StatelessWidget {
               switch (state.index) {
                 case 0:
                   return BlocProvider (
-                    create: (context) => FightBloc(databaseService, abilityService),
-                    child: FightScreen(databaseService: databaseService),
+                    create: (context) => FightBloc(databaseService, abilityService, characterService),
+                    child: FightScreen(databaseService: databaseService, characterService: characterService),
                   );
                 case 1:
                   return BlocProvider (
