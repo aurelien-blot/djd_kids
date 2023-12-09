@@ -5,14 +5,14 @@ import '../../model/creature.dart';
 import '../../model/enums.dart';
 import '../../model/weapon.dart';
 
-abstract class CharacterFormEvent extends Equatable{}
+abstract class AddCharacterFormEvent extends Equatable{}
 
-class InitializeCharacterFormEvent extends CharacterFormEvent {
+class InitializeAddCharacterFormEvent extends AddCharacterFormEvent {
   @override
   List<Object?> get props => [];
 }
 
-class CreationTypeChangeEvent extends CharacterFormEvent {
+class CreationTypeChangeEvent extends AddCharacterFormEvent {
   final CharacterCreationType characterCreationType;
   CreationTypeChangeEvent(this.characterCreationType);
 
@@ -20,7 +20,7 @@ class CreationTypeChangeEvent extends CharacterFormEvent {
   List<Object?> get props => [characterCreationType];
 }
 
-class SelectCharacter extends CharacterFormEvent {
+class SelectCharacter extends AddCharacterFormEvent {
   final Character character;
   SelectCharacter(this.character);
 
@@ -28,7 +28,7 @@ class SelectCharacter extends CharacterFormEvent {
   List<Object?> get props => [character];
 }
 
-class SelectCreature extends CharacterFormEvent {
+class SelectCreature extends AddCharacterFormEvent {
   final Creature creature;
   SelectCreature(this.creature);
 
@@ -36,7 +36,7 @@ class SelectCreature extends CharacterFormEvent {
   List<Object?> get props => [creature];
 }
 
-class SelectCacWeapon extends CharacterFormEvent {
+class SelectCacWeapon extends AddCharacterFormEvent {
   final Weapon? weapon;
   SelectCacWeapon(this.weapon);
 
@@ -44,7 +44,7 @@ class SelectCacWeapon extends CharacterFormEvent {
   List<Object?> get props => [weapon];
 }
 
-class SelectDistWeapon extends CharacterFormEvent {
+class SelectDistWeapon extends AddCharacterFormEvent {
   final Weapon? weapon;
   SelectDistWeapon(this.weapon);
 

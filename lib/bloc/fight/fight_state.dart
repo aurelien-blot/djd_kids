@@ -53,3 +53,10 @@ class OpenAttackDialogState extends FightLoadedWithSelectedCharacter {
   @override
   List<Object> get props => [];
 }
+
+class OpenEditCharacterDialogState extends FightLoadedWithSelectedCharacter {
+  OpenEditCharacterDialogState(super.fight, super.selectedCharacter, super.cacModeEnabled, super.distModeEnabled, super.magicModeEnabled, super.targetedCharacter);
+
+  @override
+  List<Object> get props => [selectedCharacter];
+}

@@ -45,4 +45,10 @@ class Weapon {
     diceDegatsBonus = map['diceDegatsBonus']??0,
     weaponType = map['weaponType']!=null?WeaponType.values.where((element) => element.name == map['weaponType']).first:WeaponType.UNKNOW
   ;
+
+  @override
+  bool operator ==(Object other) => identical(this, other) || other is Weapon && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

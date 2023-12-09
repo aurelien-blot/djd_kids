@@ -12,9 +12,11 @@ import '../../bloc/creature/creatures_bloc.dart';
 import '../../bloc/home/tab_bloc.dart';
 import '../../bloc/home/tab_event.dart';
 import '../../bloc/home/tab_state.dart';
+import '../../bloc/settings/settings_bloc.dart';
 import '../../service/database_service.dart';
 import '../creatures_screen.dart';
 import '../fight_screen.dart';
+import '../settings_screen.dart';
 import '../weapons_screen.dart';
 
 class TabScreen extends StatelessWidget {
@@ -29,7 +31,7 @@ class TabScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Le DefaultTabController englobe le Scaffold
     return DefaultTabController(
-      length: 3, // Le nombre total d'onglets
+      length: 4, // Le nombre total d'onglets
       child: Scaffold(
         appBar: AppBar(
           title: const Text(_titleLabel),
@@ -42,6 +44,7 @@ class TabScreen extends StatelessWidget {
               Tab(icon: SvgIcon(path: 'assets/icons/fight.svg')),
               Tab(icon: SvgIcon(path: 'assets/icons/cyclop.svg')),
               Tab(icon: SvgIcon(path: 'assets/icons/weapons.svg')),
+              Tab(icon: Icon(Icons.settings)),
             ],
           ),
         ),
@@ -65,6 +68,11 @@ class TabScreen extends StatelessWidget {
                   return BlocProvider (
                     create: (context) => WeaponsBloc(databaseService),
                     child: const WeaponsScreen(),
+                  );
+                case 3:
+                  return BlocProvider (
+                    create: (context) => SettingsBloc(databaseService),
+                    child: const SettingsScreen(),
                   );
                 default:
                   return const Center(child: Text('Unknown Tab'));

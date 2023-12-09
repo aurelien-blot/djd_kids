@@ -35,8 +35,7 @@ class ActionPanel extends StatelessWidget {
   }
 
   void _onEditCharacter(BuildContext context) {
-
-
+    context.read<FightBloc>().add(OpenEditCharacterDialogEvent());
   }
   void _onDiceRoll(BuildContext context) {
     context.read<FightBloc>().add(OpenAttackDialogEvent());

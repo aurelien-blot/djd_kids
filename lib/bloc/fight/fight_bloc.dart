@@ -34,13 +34,17 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     on<SelectMagicAttackEvent>(_onSelectMagicAttackEvent);
     on<SelectTargetedCharacterEvent>(_onSelectTargetedCharacterEvent);
     on<OpenAttackDialogEvent>(_onOpenAttackDialogEvent);
+    on<OpenEditCharacterDialogEvent>(_onOpenEditCharacterDialogEvent);
+    on<EditCharacterEvent>(_onEditCharacterEvent);
     on<ResolveAttackEvent>(_onResolveAttackEvent);
   }
 
   Future<void> _onInitializeFightEvent(InitializeFightEvent event, Emitter<FightState> emit) async {
     emit(FightLoading());
     //TODO A RETIRER APRES TEST
-    _fight = await _createFightForTest();
+    //
+   // _fight = await _createFightForTest();
+    _fight = await databaseService.searchFight();
 
     if(_fight == null){
       emit(NoFightState());
@@ -53,7 +57,9 @@ class FightBloc extends Bloc<FightEvent, FightState> {
   Future<void> _onCreateFightEvent(CreateFightEvent event, Emitter<FightState> emit) async {
     emit(FightLoading());
     try {
-      emit(FightLoaded(event.fight));
+      await databaseService.insertFight(event.fight);
+      _fight = await databaseService.searchFight();
+      emit(FightLoaded(_fight!));
     } catch (e) {
       emit(FightError("Impossible de créer un combat: ${e.toString()}"));
     }
@@ -66,6 +72,7 @@ class FightBloc extends Bloc<FightEvent, FightState> {
       return;
     }
     Character newCharacter = event.character;
+    newCharacter.hpCurrent = newCharacter.hpMax;
     abilityService.initiativeThrow(newCharacter);
 
     if(event.teamType == TeamType.allies) {
@@ -75,6 +82,8 @@ class FightBloc extends Bloc<FightEvent, FightState> {
       _fight!.enemies.add(newCharacter);
     }
     _setFightInitiative();
+    await databaseService.addCharacterToFight(_fight!.id!, newCharacter, event.teamType);
+    //TODO SAUVEGARDER LE COMBAT
     emit(FightLoaded(_fight!));
   }
 
@@ -89,18 +98,22 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     //character1.distWeapon = (distWeapons[0]);
     abilityService.initiativeThrow(character1);
     Character character2=Character(name: "Félix", strength: 10, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 12, charisma: 10, hpMax: 50, hpCurrent: 30, ca : 11, cacAbility: CacAbility.DEX);
+    character2.id=100;
     character2.cacWeapon = (cacWeapons[1]);
     character2.distWeapon = (distWeapons[1]);
     abilityService.initiativeThrow(character2);
     Character character3=Character(name: "Saroumane", strength: 11, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 8, hpMax: 70, hpCurrent: 7, ca : 13, cacAbility: CacAbility.FOR);
+    character3.id=101;
     character3.cacWeapon = (cacWeapons[2]);
     character3.distWeapon = (distWeapons[2]);
     abilityService.initiativeThrow(character3);
     Character character4=Character(name: "Sauron", strength: 10, dexterity: 7, constitution: 16, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 80, hpCurrent: 00, ca : 10, cacAbility: CacAbility.FOR);
+    character4.id=102;
     character4.cacWeapon = (cacWeapons[3]);
     character4.distWeapon = (distWeapons[3]);
     abilityService.initiativeThrow(character4);
     Character character5=Character(name: "Jacques", strength: 10, dexterity: 42, constitution: 10, intelligence: 10, wisdom: 10, charisma: 26, hpMax: 53, hpCurrent: 52, ca : 15, cacAbility: CacAbility.DEX);
+    character5.id=103;
     character5.cacWeapon = (cacWeapons[4]);
     character5.distWeapon = (distWeapons[4]);
     abilityService.initiativeThrow(character5);
@@ -201,9 +214,21 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     emit(OpenAttackDialogState(_fight!, _selectedCharacter!, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
   }
 
-  void _onResolveAttackEvent(ResolveAttackEvent event, Emitter<FightState> emit) {
+  void _onOpenEditCharacterDialogEvent(OpenEditCharacterDialogEvent event, Emitter<FightState> emit) {
+    emit(FightLoading());
+    emit(OpenEditCharacterDialogState(_fight!, _selectedCharacter!, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
+  }
+
+  Future<void> _onEditCharacterEvent(EditCharacterEvent event, Emitter<FightState> emit) async {
+    emit(FightLoading());
+    await databaseService.updateFightCharacter(event.character);
+    emit(FightLoadedWithSelectedCharacter(_fight!, event.character, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
+  }
+
+  Future<void> _onResolveAttackEvent(ResolveAttackEvent event, Emitter<FightState> emit) async {
     emit(FightLoading());
     characterService.reduceHp(_targetedCharacter!,  event.totalDegats);
+    await databaseService.updateFightCharacter(_targetedCharacter!);
     _selectedCharacter=null;
     _targetedCharacter=null;
      _cacModeEnabled=false;

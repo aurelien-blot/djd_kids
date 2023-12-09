@@ -6,16 +6,22 @@ import 'package:sqflite/sqflite.dart';
 import '../constants.dart';
 import '../model/character.dart';
 import '../model/creature.dart';
+import '../model/enums.dart';
+import '../model/fight.dart';
 import '../model/weapon.dart';
 
 class DatabaseService {
   static const _dbName = 'dndUtility.db';
   static const _dbVersion = 1;
 
+  static const tableFight = 'fight';
   static const tableCreatures = 'creatures';
   static const tableCharacters = 'characters';
+  static const tableFightCharacters = 'fightCharacters';
   static const tableWeapons = 'weapons';
   static const columnId = 'id';
+  static const columnFightId = 'fight_id';
+  static const columnTeamType = 'teamType';
   static const columnName = 'name';
   static const columnCreatureName = 'creatureName';
   static const columnCreatureId = 'creatureId';
@@ -52,38 +58,88 @@ class DatabaseService {
 
     if (_database != null) return _database!;
     _database = await _initDatabase();
-    // TODO A RETIRER POUR TEST
-    //await _initDatas();
     return _database!;
   }
 
   _initDatabase() async {
-    //TODO A RETIRER SI NECESSAIRE
-    //await _resetDatabase();
     String path = join(await getDatabasesPath(), _dbName);
     Database database= await openDatabase(path,version: _dbVersion, onCreate: _onCreate);
 
     return database;
   }
 
-  Future<void> _resetDatabase() async {
+  Future<void> resetDatabase() async {
     if (kDebugMode) {
       print('Reset database');
     }
     // Supprimez la base de données actuelle
     String path = join(await getDatabasesPath(), _dbName);
     await deleteDatabase(path);
-
     // Réinitialisez la variable _database
     _database = null;
 
   }
 
   Future _onCreate(Database db, int version) async {
+    await _createFightTable(db);
     await _createCreatureTable(db);
     await _createCharacterTable(db);
+    await _createFightCharacterTable(db);
     await _createWeaponTable(db);
   }
+
+  Future _createFightTable(Database db) async{
+    await db.execute('CREATE TABLE $tableFight ('
+        '$columnId INTEGER PRIMARY KEY,'
+        '$columnName TEXT NOT NULL'
+        ')');
+  }
+
+  Future<void> insertFight(Fight fight) async {
+    Database db = await instance.database;
+    Map<String, dynamic> row = fight.toMap();
+    await db.insert(tableFight, row);
+  }
+  Future<void> deleleteAllFights() async {
+    Database db = await instance.database;
+    await db.delete(tableFight);
+    await db.delete(tableFightCharacters);
+  }
+
+  Future<Fight?> searchFight() async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> maps = await db.query(tableFight);
+    if(maps.length == 0){
+      return null;
+    }
+    Fight fight = Fight.fromMap(maps[0]);
+    List<Map<String, dynamic>> mapsFightCharacters = await db.query(tableFightCharacters, where: '$columnFightId = ?', whereArgs: [fight.id]);
+    List<Weapon> cacWeapons = await getWeaponsByType(WeaponType.MELEE);
+    List<Weapon> distWeapons = await getWeaponsByType(WeaponType.DISTANCE);
+    for(Map<String, dynamic> map in mapsFightCharacters){
+      Character character = Character.fromMap(map);
+      if(map[columnCacWeaponId] != null){
+        character.cacWeapon = cacWeapons.firstWhere((element) => element.id == map[columnCacWeaponId]);
+      }
+      else{
+        character.cacWeapon = null;
+      }
+      if(map[columnDistWeaponId] != null){
+        character.distWeapon = distWeapons.firstWhere((element) => element.id == map[columnDistWeaponId]);
+      }
+      else{
+        character.distWeapon = null;
+      }
+      if(map[columnTeamType] == TeamType.allies.name){
+        fight.allies.add(character);
+      }
+      else if(map[columnTeamType] == TeamType.enemies.name){
+        fight.enemies.add(character);
+      }
+    }
+    return fight;
+  }
+
 
   Future _createCreatureTable(Database db) async{
     await db.execute('CREATE TABLE $tableCreatures ('
@@ -132,6 +188,30 @@ class DatabaseService {
     return await db.delete(tableCreatures, where: '$columnId = ?', whereArgs: [id]);
   }
 
+  Future _createFightCharacterTable(Database db) async{
+    await db.execute('CREATE TABLE $tableFightCharacters ('
+        '$columnId INTEGER PRIMARY KEY,'
+        '$columnFightId INTEGER ,'
+        '$columnTeamType TEXT NOT NULL,'
+        '$columnName TEXT NOT NULL,'
+        '$columnCreatureName TEXT NULL,'
+        '$columnCreatureId INTEGER NULL,'
+        '$columnStrength INTEGER NOT NULL,'
+        '$columnDexterity INTEGER NOT NULL,'
+        '$columnConstitution INTEGER NOT NULL,'
+        '$columnIntelligence INTEGER NOT NULL,'
+        '$columnWisdom INTEGER NOT NULL,'
+        '$columnCharisma INTEGER NOT NULL,'
+        '$columnInitiative INTEGER NULL,'
+        '$columnHpMax INTEGER NOT NULL,'
+        '$columnHpCurrent INTEGER NOT NULL,'
+        '$columnCa INTEGER NOT NULL,'
+        '$columnCacAbility TEXT NOT NULL,'
+        '$columnCacWeaponId INTEGER NULL,'
+        '$columnDistWeaponId INTEGER NULL'
+        ')');
+  }
+
   Future _createCharacterTable(Database db) async{
     await db.execute('CREATE TABLE $tableCharacters ('
         '$columnId INTEGER PRIMARY KEY,'
@@ -152,6 +232,21 @@ class DatabaseService {
         '$columnCacWeaponId INTEGER NULL,'
         '$columnDistWeaponId INTEGER NULL'
         ')');
+  }
+
+  Future<void> updateFightCharacter(Character character) async {
+    Database db = await instance.database;
+    Map<String, dynamic> row = character.toMap();
+    int id = row[columnId];
+    await db.update(tableFightCharacters, row, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future<void> addCharacterToFight(int fightId, Character character, TeamType teamType) async {
+    Database db = await instance.database;
+    Map<String, dynamic> row = character.toMap();
+    row[columnFightId] = fightId;
+    row[columnTeamType] = teamType.name;
+    await db.insert(tableFightCharacters, row);
   }
 
   // Insertion d'une nouvelle créature
@@ -242,8 +337,10 @@ class DatabaseService {
   }
 
 
-  Future<void> _initDatas() async{
-    print("Init datas");
+  Future<void> initDatas() async{
+    if (kDebugMode) {
+      print("Init datas");
+    }
     final CharacterService characterService = CharacterService();
 
     Weapon weapon1 = Weapon(name: 'Bâton', diceDegatsNumber: 1, diceDegatsValue: 6, diceDegatsBonus: 0, weaponType: WeaponType.MELEE);

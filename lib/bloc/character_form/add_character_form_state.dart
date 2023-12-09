@@ -5,14 +5,14 @@ import '../../model/character.dart';
 import '../../model/enums.dart';
 import '../../model/weapon.dart';
 
-abstract class CharacterFormState extends Equatable{}
+abstract class AddCharacterFormState extends Equatable{}
 
-class FormLoading extends CharacterFormState {
+class FormLoading extends AddCharacterFormState {
   @override
   List<Object?> get props => [];
 }
 
-class FormLoaded extends CharacterFormState {
+class FormLoaded extends AddCharacterFormState {
   final CharacterCreationType characterCreationType;
   final Character character;
   final Character? fromCharacter;
@@ -27,7 +27,7 @@ class FormLoaded extends CharacterFormState {
   List<Object?> get props => [character, characters, creatures, characterCreationType, fromCharacter, fromCreature, cacWeapons, distWeapons];
 }
 
-class FormErrorState extends CharacterFormState {
+class FormErrorState extends AddCharacterFormState {
   final String message;
   FormErrorState(this.message);
 

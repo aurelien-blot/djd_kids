@@ -8,10 +8,10 @@ import '../../constants.dart';
 import '../../model/character.dart';
 import '../../model/creature.dart';
 import '../../model/weapon.dart';
-import 'character_form_event.dart';
-import 'character_form_state.dart';
+import 'add_character_form_event.dart';
+import 'add_character_form_state.dart';
 
-class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
+class AddCharacterFormBloc extends Bloc<AddCharacterFormEvent, AddCharacterFormState> {
 
   final DatabaseService databaseService;
   final CharacterService characterService;
@@ -36,8 +36,8 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
   final TextEditingController caController = TextEditingController();
 
 
-  CharacterFormBloc({required this.databaseService, required this.characterService}) : super(FormLoading()) {
-    on<InitializeCharacterFormEvent>(_onInitializeCharacterForm);
+  AddCharacterFormBloc({required this.databaseService, required this.characterService}) : super(FormLoading()) {
+    on<InitializeAddCharacterFormEvent>(_onInitializeAddCharacterForm);
     on<CreationTypeChangeEvent>(_onCreationTypeChangeEvent);
     on<SelectCharacter>(_onSelectCharacter);
     on<SelectCreature>(_onSelectCreature);
@@ -45,7 +45,7 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
     on<SelectDistWeapon>(_onSelectDistWeapon);
   }
 
-  Future<void> _onInitializeCharacterForm(InitializeCharacterFormEvent event, Emitter<CharacterFormState> emit) async {
+  Future<void> _onInitializeAddCharacterForm(InitializeAddCharacterFormEvent event, Emitter<AddCharacterFormState> emit) async {
     emit(FormLoading());
     _character = characterService.initNewCharacter();
     _characters = await databaseService.getCharacters();
@@ -56,7 +56,7 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
     emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.character, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
 
-  Future<void> _onCreationTypeChangeEvent(CreationTypeChangeEvent event, Emitter<CharacterFormState> emit) async {
+  Future<void> _onCreationTypeChangeEvent(CreationTypeChangeEvent event, Emitter<AddCharacterFormState> emit) async {
     emit(FormLoading());
     _fromCreature = null;
     _fromCharacter = null;
@@ -76,7 +76,7 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
 
   }
 
-  void _onSelectCharacter(SelectCharacter event, Emitter<CharacterFormState> emit) {
+  void _onSelectCharacter(SelectCharacter event, Emitter<AddCharacterFormState> emit) {
     emit(FormLoading());
     _fromCharacter = event.character;
     _fromCreature = null;
@@ -85,7 +85,7 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
     emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.character, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
 
-  void _onSelectCreature(SelectCreature event, Emitter<CharacterFormState> emit) {
+  void _onSelectCreature(SelectCreature event, Emitter<AddCharacterFormState> emit) {
     emit(FormLoading());
     _fromCharacter = null;
     _fromCreature = event.creature;
@@ -93,13 +93,13 @@ class CharacterFormBloc extends Bloc<CharacterFormEvent, CharacterFormState> {
     _updateControllersWithCharacter(_character!);
     emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.creature, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
-  void _onSelectCacWeapon(SelectCacWeapon event, Emitter<CharacterFormState> emit) {
+  void _onSelectCacWeapon(SelectCacWeapon event, Emitter<AddCharacterFormState> emit) {
     emit(FormLoading());
     _character!.cacWeapon = event.weapon;
     emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.creature, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
 
-  void _onSelectDistWeapon(SelectDistWeapon event, Emitter<CharacterFormState> emit) {
+  void _onSelectDistWeapon(SelectDistWeapon event, Emitter<AddCharacterFormState> emit) {
     emit(FormLoading());
     _character!.distWeapon = event.weapon;
     emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.creature, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));

@@ -5,9 +5,9 @@ import 'package:djd_kids/widget/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/character_form/character_form_bloc.dart';
-import '../bloc/character_form/character_form_event.dart';
-import '../bloc/character_form/character_form_state.dart';
+import '../bloc/character_form/add_character_form_bloc.dart';
+import '../bloc/character_form/add_character_form_event.dart';
+import '../bloc/character_form/add_character_form_state.dart';
 import '../model/character.dart';
 import '../model/creature.dart';
 import '../model/weapon.dart';
@@ -26,10 +26,10 @@ class AddCharacterForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) {
-          return CharacterFormBloc(databaseService: databaseService , characterService: characterService)
-            ..add(InitializeCharacterFormEvent());
+          return AddCharacterFormBloc(databaseService: databaseService , characterService: characterService)
+            ..add(InitializeAddCharacterFormEvent());
         },
-        child: BlocConsumer<CharacterFormBloc, CharacterFormState>(
+        child: BlocConsumer<AddCharacterFormBloc, AddCharacterFormState>(
             listener: (context, state) {},
             builder: (context, state) {
               if (state is FormLoading) {
@@ -60,7 +60,7 @@ class AddCharacterForm extends StatelessWidget {
                     value: CharacterCreationType.character,
                     groupValue: state.characterCreationType,
                     onChanged: (CharacterCreationType? value) {
-                      context.read<CharacterFormBloc>().add(CreationTypeChangeEvent(value!));
+                      context.read<AddCharacterFormBloc>().add(CreationTypeChangeEvent(value!));
                     },
                   ),
                 ),
@@ -70,7 +70,7 @@ class AddCharacterForm extends StatelessWidget {
                     value: CharacterCreationType.creature,
                     groupValue: state.characterCreationType,
                     onChanged: (CharacterCreationType? value) {
-                      context.read<CharacterFormBloc>().add(CreationTypeChangeEvent(value!));
+                      context.read<AddCharacterFormBloc>().add(CreationTypeChangeEvent(value!));
                     },
                   ),
                 ),
@@ -92,7 +92,7 @@ class AddCharacterForm extends StatelessWidget {
                         }).toList(),
                         value: state.fromCharacter,
                         onChanged: (Character? value) {
-                          context.read<CharacterFormBloc>().add(SelectCharacter(value!));
+                          context.read<AddCharacterFormBloc>().add(SelectCharacter(value!));
                         },
                         dropdownColor: Colors.grey[400],
                         hint: const Text("Choisir un personnage"),
@@ -112,7 +112,7 @@ class AddCharacterForm extends StatelessWidget {
                         }).toList(),
                         value: state.fromCreature,
                         onChanged: (Creature? value) {
-                          context.read<CharacterFormBloc>().add(SelectCreature(value!));
+                          context.read<AddCharacterFormBloc>().add(SelectCreature(value!));
                         },
                         dropdownColor: Colors.grey[400],
                         hint: const Text("Choisir une créature"),
@@ -126,7 +126,7 @@ class AddCharacterForm extends StatelessWidget {
                   children: [
                     Expanded(child :
                       TextFormField(
-                        controller: context.read<CharacterFormBloc>().nameController,
+                        controller: context.read<AddCharacterFormBloc>().nameController,
                         decoration: const InputDecoration(labelText: 'Nom'),
                         onSaved: (value) => newCharacter.name = value!,
                         validator: (value) {
@@ -142,7 +142,7 @@ class AddCharacterForm extends StatelessWidget {
                     children: [
                       Expanded(child :
                         TextFormField(
-                          controller: context.read<CharacterFormBloc>().strengthController,
+                          controller: context.read<AddCharacterFormBloc>().strengthController,
                           decoration: const InputDecoration(labelText: 'Force'),
                           keyboardType: TextInputType.number,
                           onSaved: (value) => newCharacter.strength = int.tryParse(value ?? '') ?? 0,
@@ -160,7 +160,7 @@ class AddCharacterForm extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(child :
                         TextFormField(
-                          controller: context.read<CharacterFormBloc>().dexterityController,
+                          controller: context.read<AddCharacterFormBloc>().dexterityController,
                           decoration: const InputDecoration(labelText: 'Dextérité'),
                           keyboardType: TextInputType.number,
                           onSaved: (value) => newCharacter.dexterity = int.tryParse(value ?? '') ?? 0,
@@ -178,7 +178,7 @@ class AddCharacterForm extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(child :
                         TextFormField(
-                          controller: context.read<CharacterFormBloc>().constitutionController,
+                          controller: context.read<AddCharacterFormBloc>().constitutionController,
                           decoration: const InputDecoration(labelText: 'Constitution'),
                           keyboardType: TextInputType.number,
                           onSaved: (value) => newCharacter.constitution = int.tryParse(value ?? '') ?? 0,
@@ -196,7 +196,7 @@ class AddCharacterForm extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(child :
                         TextFormField(
-                          controller: context.read<CharacterFormBloc>().intelligenceController,
+                          controller: context.read<AddCharacterFormBloc>().intelligenceController,
                           decoration: const InputDecoration(labelText: 'Intelligence'),
                           keyboardType: TextInputType.number,
                           onSaved: (value) => newCharacter.intelligence = int.tryParse(value ?? '') ?? 0,
@@ -214,7 +214,7 @@ class AddCharacterForm extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(child :
                         TextFormField(
-                          controller: context.read<CharacterFormBloc>().wisdomController,
+                          controller: context.read<AddCharacterFormBloc>().wisdomController,
                           decoration: const InputDecoration(labelText: 'Sagesse'),
                           keyboardType: TextInputType.number,
                           onSaved: (value) => newCharacter.wisdom = int.tryParse(value ?? '') ?? 0,
@@ -232,7 +232,7 @@ class AddCharacterForm extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(child :
                         TextFormField(
-                          controller: context.read<CharacterFormBloc>().charismaController,
+                          controller: context.read<AddCharacterFormBloc>().charismaController,
                           decoration: const InputDecoration(labelText: 'Charisme'),
                           keyboardType: TextInputType.number,
                           onSaved: (value) => newCharacter.charisma = int.tryParse(value ?? '') ?? 0,
@@ -250,10 +250,10 @@ class AddCharacterForm extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(child :
                         TextFormField(
-                          controller: context.read<CharacterFormBloc>().hpController,
+                          controller: context.read<AddCharacterFormBloc>().caController,
                           decoration: const InputDecoration(labelText: 'CA'),
                           keyboardType: TextInputType.number,
-                          onSaved: (value) => newCharacter.hpMax = int.tryParse(value ?? '') ?? 0,
+                          onSaved: (value) => newCharacter.ca = int.tryParse(value ?? '') ?? 0,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Ce champ est requis.';
@@ -268,7 +268,7 @@ class AddCharacterForm extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(child :
                         TextFormField(
-                          controller: context.read<CharacterFormBloc>().hpController,
+                          controller: context.read<AddCharacterFormBloc>().hpController,
                           decoration: const InputDecoration(labelText: 'Pts de Vie'),
                           keyboardType: TextInputType.number,
                           onSaved: (value) => newCharacter.hpMax = int.tryParse(value ?? '') ?? 0,
@@ -306,7 +306,7 @@ class AddCharacterForm extends StatelessWidget {
                           }).toList(),
                           value: newCharacter.cacWeapon,
                           onChanged: (Weapon? value) {
-                            context.read<CharacterFormBloc>().add(SelectCacWeapon(value));
+                            context.read<AddCharacterFormBloc>().add(SelectCacWeapon(value));
                           },
                           dropdownColor: Colors.grey[400],
                           hint: const Text("Choisir une arme de corps à corps"),
@@ -318,7 +318,7 @@ class AddCharacterForm extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: () {
-                            context.read<CharacterFormBloc>().add(SelectDistWeapon(null));
+                            context.read<AddCharacterFormBloc>().add(SelectDistWeapon(null));
                           },
                         ),
                       )
@@ -344,7 +344,7 @@ class AddCharacterForm extends StatelessWidget {
                           }).toList(),
                           value: newCharacter.distWeapon,
                           onChanged: (Weapon? value) {
-                            context.read<CharacterFormBloc>().add(SelectDistWeapon(value));
+                            context.read<AddCharacterFormBloc>().add(SelectDistWeapon(value));
                           },
                           dropdownColor: Colors.grey[400],
                           hint: const Text("Choisir une arme de distance"),
@@ -356,7 +356,7 @@ class AddCharacterForm extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: () {
-                            context.read<CharacterFormBloc>().add(SelectDistWeapon(null));
+                            context.read<AddCharacterFormBloc>().add(SelectDistWeapon(null));
                           },
                         ),
                       )

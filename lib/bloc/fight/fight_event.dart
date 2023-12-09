@@ -29,6 +29,14 @@ class AddCharacterEvent extends FightEvent {
   @override
   List<Object> get props => [teamType, character];
 }
+class EditCharacterEvent extends FightEvent {
+  final Character character;
+  EditCharacterEvent(this.character);
+
+  @override
+  List<Object> get props => [character];
+}
+
 
 class SelectCharacterEvent extends FightEvent {
   final Character character;
@@ -56,6 +64,9 @@ class SelectMagicAttackEvent extends FightEvent {
 
 class OpenAttackDialogEvent extends FightEvent {
   OpenAttackDialogEvent();
+}
+class OpenEditCharacterDialogEvent extends FightEvent {
+  OpenEditCharacterDialogEvent();
 }
 
 class ResolveAttackEvent extends FightEvent {

@@ -91,4 +91,11 @@ class Character {
     //cacWeapon = map['cacWeapon']!=null?Weapon.fromMap(map['cacWeapon']):null,
     //distWeapon = map['distWeapon']!=null?Weapon.fromMap(map['distWeapon']):null,
     initiative = map['initiative'];
+
+  @override
+  bool operator ==(Object other) => identical(this, other) || other is Character && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
 }

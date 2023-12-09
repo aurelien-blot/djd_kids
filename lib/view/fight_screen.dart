@@ -14,6 +14,7 @@ import '../model/fight.dart';
 import '../service/ability_service.dart';
 import '../service/character_service.dart';
 import '../widget/add_character_form.dart';
+import '../widget/edit_character_form.dart';
 import '../widget/initiative_band.dart';
 import '../widget/loading_dialog.dart';
 
@@ -56,6 +57,17 @@ class FightScreen extends StatelessWidget {
         return AttackDialog(fightBloc:context.read<FightBloc>(), abilityService: abilityService, attacker: selectedCharacter!, defender: targetedCharacter!, attackType: attackType);
       },
     );
+  }
+
+  void _openEditCharacterDialog(BuildContext context, OpenEditCharacterDialogState state) async{
+    final FightBloc fightBloc = context.read<FightBloc>();
+    final result = await showDialog<Character>(
+      context: context,
+      builder: (ctx) => EditCharacterForm(databaseService: databaseService , character: state.selectedCharacter),
+    );
+    if (result != null) {
+      fightBloc.add(EditCharacterEvent(result));
+    }
   }
 
   Expanded buildTeamZone(BuildContext context, TeamType teamType, List<Character> team) {
@@ -181,6 +193,9 @@ class FightScreen extends StatelessWidget {
               if(state is OpenAttackDialogState){
                 _openAttackDialog(context, state);
               }
+              else if(state is OpenEditCharacterDialogState){
+                _openEditCharacterDialog(context, state);
+              }
               else if (state is FightLoadedWithSelectedCharacter) {
                 selectedCharacter = state.selectedCharacter;
                 targetedCharacter = state.targetedCharacter;
@@ -244,6 +259,7 @@ class FightScreen extends StatelessWidget {
                 );
               }
               else if (state is FightLoaded) {
+                print(state.fight.id);
                 return Scaffold(
                     body:
                       Padding(padding: const EdgeInsets.all(10),

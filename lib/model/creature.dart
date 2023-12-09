@@ -1,3 +1,5 @@
+import 'package:djd_kids/model/fight.dart';
+
 import '../constants.dart';
 
 class Creature {
@@ -72,4 +74,11 @@ class Creature {
     cacAbility = map['cacAbility'] != null? CacAbility.values.firstWhere((element) => element.name == map['cacAbility'],orElse: () => CacAbility.FOR): CacAbility.FOR,
     ca = map['ca']??0
   ;
+
+  @override
+  bool operator ==(Object other) => identical(this, other) || other is Fight && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
 }
