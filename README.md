@@ -16,12 +16,5 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 ## TODO
-- Couleur selon le niveau de vie
-- affichage des armes des persos
-- gestion recherche combat en cours
-- Sauvegarde d'un combat 
-- sauvegarde des combats en fonction de leur évolution
-- suppression d un combat
-- save des créatures
-- save des armes
-- ne pas sélectionner un mort
+
+- mains nues si pas d'armes

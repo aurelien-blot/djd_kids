@@ -94,6 +94,27 @@ class FightScreen extends StatelessWidget {
     );
   }
 
+  Color _selectCharacterColor(Character character){
+    if(character.isDead){
+      return Colors.grey;
+    }
+    else if(character.hpCurrent >= character.hpMax){
+      return Colors.green;
+    }
+    else if(character.hpCurrent > character.hpMax *0.75){
+      return Colors.lightGreen;
+    }
+    else if(character.hpCurrent > character.hpMax *0.5){
+      return Colors.yellow;
+    }
+    else if(character.hpCurrent > character.hpMax *0.25){
+      return Colors.orange;
+    }
+    else{
+      return Colors.red;
+    }
+  }
+
   Widget _characterCard(BuildContext context, Character character) {
     bool isCharacterSelected = selectedCharacter == character;
     bool isTargetSelected = targetedCharacter == character;
@@ -101,6 +122,19 @@ class FightScreen extends StatelessWidget {
     if (character.creatureName!=null) {
       title += ' (${character.creatureName})';
     }
+
+    String weaponLabel = '';
+    if (character.cacWeapon!=null) {
+      weaponLabel += character.cacWeapon!.name!;
+    }
+    if (character.distWeapon!=null && character.cacWeapon!=null) {
+      weaponLabel += ' / ';
+    }
+    if (character.distWeapon!=null) {
+      weaponLabel += character.distWeapon!.name!;
+    }
+
+    Color characterColor = _selectCharacterColor(character);
 
     Color? cardColor;
     if(isCharacterSelected){
@@ -113,6 +147,9 @@ class FightScreen extends StatelessWidget {
       color: cardColor,
       child: ListTile(
         onTap: () {
+          if(character.isDead){
+            return;
+          }
           if(isActionSelected && selectedCharacter!=null && selectedCharacter!=character){
             context.read<FightBloc>().add(SelectTargetedCharacterEvent(character));
           }
@@ -130,12 +167,18 @@ class FightScreen extends StatelessWidget {
               const Icon(Icons.cancel, color: Colors.red, size: 30),
           ],
         ),
-        title: Text(title),
+        title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children :[
+              Text(title),
+              Text('PV : ${character.hpCurrent}/${character.hpMax}', style:
+                TextStyle(color: characterColor, fontWeight: FontWeight.bold)
+                )
+            ]
+        ),
         subtitle:
             Column(
               children: [
-                /*Text('PV: ${character.currentHp}/${character.maxHp}'),
-                Text('CA: ${character.ca}'),*/
                 Padding(
                 padding: const EdgeInsets.all(8.0),
                   child:Row(
@@ -143,7 +186,7 @@ class FightScreen extends StatelessWidget {
                       children :[
                         Text('Init : ${character.initiative}'),
                         Text('CA : ${character.ca}'),
-                        Text('PV : ${character.hpCurrent}/${character.hpMax}')
+                        Text(weaponLabel)
                       ]
                   ),
                 ),
