@@ -302,7 +302,6 @@ class FightScreen extends StatelessWidget {
                 );
               }
               else if (state is FightLoaded) {
-                print(state.fight.id);
                 return Scaffold(
                     body:
                       Padding(padding: const EdgeInsets.all(10),

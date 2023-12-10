@@ -8,12 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../bloc/character/characters_bloc.dart';
 import '../../bloc/creature/creatures_bloc.dart';
 import '../../bloc/home/tab_bloc.dart';
 import '../../bloc/home/tab_event.dart';
 import '../../bloc/home/tab_state.dart';
 import '../../bloc/settings/settings_bloc.dart';
 import '../../service/database_service.dart';
+import '../characters_screen.dart';
 import '../creatures_screen.dart';
 import '../fight_screen.dart';
 import '../settings_screen.dart';
@@ -31,7 +33,7 @@ class TabScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Le DefaultTabController englobe le Scaffold
     return DefaultTabController(
-      length: 4, // Le nombre total d'onglets
+      length: 5, // Le nombre total d'onglets
       child: Scaffold(
         appBar: AppBar(
           title: const Text(_titleLabel),
@@ -42,6 +44,7 @@ class TabScreen extends StatelessWidget {
             },
             tabs: const [
               Tab(icon: SvgIcon(path: 'assets/icons/fight.svg')),
+              Tab(icon: SvgIcon(path: 'assets/icons/wizard.svg')),
               Tab(icon: SvgIcon(path: 'assets/icons/cyclop.svg')),
               Tab(icon: SvgIcon(path: 'assets/icons/weapons.svg')),
               Tab(icon: Icon(Icons.settings)),
@@ -61,15 +64,20 @@ class TabScreen extends StatelessWidget {
                   );
                 case 1:
                   return BlocProvider (
+                    create: (context) => CharactersBloc(databaseService),
+                    child: const CharactersScreen(),
+                  );
+                case 2:
+                  return BlocProvider (
                     create: (context) => CreaturesBloc(databaseService),
                     child: const CreaturesScreen(),
                   );
-                case 2:
+                case 3:
                   return BlocProvider (
                     create: (context) => WeaponsBloc(databaseService),
                     child: const WeaponsScreen(),
                   );
-                case 3:
+                case 4:
                   return BlocProvider (
                     create: (context) => SettingsBloc(databaseService),
                     child: const SettingsScreen(),

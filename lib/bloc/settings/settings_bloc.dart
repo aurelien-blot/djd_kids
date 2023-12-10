@@ -32,7 +32,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(SettingsLoading());
     try {
       if(codeController.text == "666") {
-        await databaseService.initDatas();
+        String result = await databaseService.initDatas();
       }
       emit(SettingsLoaded());
     } catch (e) {

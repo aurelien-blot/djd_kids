@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../constants.dart';
 import '../../model/character.dart';
 import '../../model/creature.dart';
 import '../../model/enums.dart';
@@ -26,4 +27,12 @@ class SelectDistWeapon extends EditCharacterFormEvent {
 
   @override
   List<Object?> get props => [weapon];
+}
+
+class SelectCacAbility extends EditCharacterFormEvent {
+  final CacAbility cacAbility;
+  SelectCacAbility(this.cacAbility);
+
+  @override
+  List<Object?> get props => [cacAbility];
 }

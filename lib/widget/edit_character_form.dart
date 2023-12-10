@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/character_form/edit_character_form_bloc.dart';
 import '../bloc/character_form/edit_character_form_event.dart';
 import '../bloc/character_form/edit_character_form_state.dart';
+import '../constants.dart';
 import '../model/character.dart';
 import '../model/weapon.dart';
 import '../service/database_service.dart';
@@ -59,6 +60,28 @@ class EditCharacterForm extends StatelessWidget {
                       onSaved: (value) => character.name = value!,
                       validator: (value) {
                         return (value == null || value.isEmpty) ? 'Ce champ est requis.' : null;
+                      },
+                    ),
+                  ),
+                  Expanded(child:
+                    SegmentedButton<CacAbility>(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Colors.blue;
+                            }
+                            return Colors.grey;
+                          },
+                        ),
+                      ),
+                      segments: const <ButtonSegment<CacAbility>>[
+                        ButtonSegment<CacAbility>(value: CacAbility.FOR, label: Text('FOR')),
+                        ButtonSegment<CacAbility>(value: CacAbility.DEX, label: Text('DEX')),
+                      ],
+                      selected: <CacAbility>{character.cacAbility},
+                      onSelectionChanged: (Set<CacAbility> newSelection) {
+                        context.read<EditCharacterFormBloc>().add(SelectCacAbility(newSelection.first));
                       },
                     ),
                   ),
@@ -269,7 +292,7 @@ class EditCharacterForm extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () {
-                          context.read<EditCharacterFormBloc>().add(SelectDistWeapon(null));
+                          context.read<EditCharacterFormBloc>().add(SelectCacWeapon(null));
                         },
                       ),
                     )

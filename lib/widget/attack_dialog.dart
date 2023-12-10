@@ -177,7 +177,7 @@ class AttackDialog extends StatelessWidget {
       return [];
     }
 
-    int diceNumber = weapon!.diceDegatsNumber;
+    int diceNumber = weapon!=null?weapon!.diceDegatsNumber:0;
     if(state.attackResult == AttackResult.CRITICAL_SUCCESS){
       diceNumber = diceNumber * 2;
     }

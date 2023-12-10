@@ -41,9 +41,6 @@ class FightBloc extends Bloc<FightEvent, FightState> {
 
   Future<void> _onInitializeFightEvent(InitializeFightEvent event, Emitter<FightState> emit) async {
     emit(FightLoading());
-    //TODO A RETIRER APRES TEST
-    //
-   // _fight = await _createFightForTest();
     _fight = await databaseService.searchFight();
 
     if(_fight == null){
@@ -81,50 +78,16 @@ class FightBloc extends Bloc<FightEvent, FightState> {
     else if(event.teamType == TeamType.enemies){
       _fight!.enemies.add(newCharacter);
     }
-    _setFightInitiative();
+    if(newCharacter.cacWeapon==null){
+      Weapon? cacWeapon = await databaseService.getWeaponByName("Mains nues");
+      if(null!=cacWeapon){
+        newCharacter.cacWeapon = cacWeapon;
+      }
+    }
     await databaseService.addCharacterToFight(_fight!.id!, newCharacter, event.teamType);
-    //TODO SAUVEGARDER LE COMBAT
+    _fight= await databaseService.searchFight();
+    _setFightInitiative();
     emit(FightLoaded(_fight!));
-  }
-
-  Future<Fight> _createFightForTest() async{
-    Fight test =  Fight(name: "Combat 1", allies: [], enemies: []);
-
-    List<Weapon> cacWeapons = await databaseService.getWeaponsByType(WeaponType.MELEE);
-    List<Weapon> distWeapons = await databaseService.getWeaponsByType(WeaponType.DISTANCE);
-
-    Character character1= await databaseService.getCharacterById(7);
-    character1.cacWeapon = (cacWeapons[0]);
-    //character1.distWeapon = (distWeapons[0]);
-    abilityService.initiativeThrow(character1);
-    Character character2=Character(name: "Félix", strength: 10, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 12, charisma: 10, hpMax: 50, hpCurrent: 30, ca : 11, cacAbility: CacAbility.DEX);
-    character2.id=100;
-    character2.cacWeapon = (cacWeapons[1]);
-    character2.distWeapon = (distWeapons[1]);
-    abilityService.initiativeThrow(character2);
-    Character character3=Character(name: "Saroumane", strength: 11, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 8, hpMax: 70, hpCurrent: 7, ca : 13, cacAbility: CacAbility.FOR);
-    character3.id=101;
-    character3.cacWeapon = (cacWeapons[2]);
-    character3.distWeapon = (distWeapons[2]);
-    abilityService.initiativeThrow(character3);
-    Character character4=Character(name: "Sauron", strength: 10, dexterity: 7, constitution: 16, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 80, hpCurrent: 00, ca : 10, cacAbility: CacAbility.FOR);
-    character4.id=102;
-    character4.cacWeapon = (cacWeapons[3]);
-    character4.distWeapon = (distWeapons[3]);
-    abilityService.initiativeThrow(character4);
-    Character character5=Character(name: "Jacques", strength: 10, dexterity: 42, constitution: 10, intelligence: 10, wisdom: 10, charisma: 26, hpMax: 53, hpCurrent: 52, ca : 15, cacAbility: CacAbility.DEX);
-    character5.id=103;
-    character5.cacWeapon = (cacWeapons[4]);
-    character5.distWeapon = (distWeapons[4]);
-    abilityService.initiativeThrow(character5);
-
-    test.allies.add(character1);
-    test.allies.add(character2);
-    test.enemies.add(character3);
-    test.enemies.add(character4);
-    test.enemies.add(character5);
-
-    return test;
   }
 
   void _setFightInitiative(){
@@ -221,6 +184,12 @@ class FightBloc extends Bloc<FightEvent, FightState> {
 
   Future<void> _onEditCharacterEvent(EditCharacterEvent event, Emitter<FightState> emit) async {
     emit(FightLoading());
+    if(event.character.cacWeapon==null){
+      Weapon? cacWeapon = await databaseService.getWeaponByName("Mains nues");
+      if(null!=cacWeapon){
+        event.character.cacWeapon = cacWeapon;
+      }
+    }
     await databaseService.updateFightCharacter(event.character);
     emit(FightLoadedWithSelectedCharacter(_fight!, event.character, _cacModeEnabled, _distModeEnabled, _magicModeEnabled, _targetedCharacter));
   }

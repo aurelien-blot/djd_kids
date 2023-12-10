@@ -17,6 +17,7 @@ class AddCharacterFormBloc extends Bloc<AddCharacterFormEvent, AddCharacterFormS
   final CharacterService characterService;
 
   Character? _character;
+  CharacterCreationType _characterCreationType = CharacterCreationType.character;
   List<Character> _characters = [];
   List<Creature> _creatures = [];
   List<Weapon> _cacWeapons = [];
@@ -43,6 +44,7 @@ class AddCharacterFormBloc extends Bloc<AddCharacterFormEvent, AddCharacterFormS
     on<SelectCreature>(_onSelectCreature);
     on<SelectCacWeapon>(_onSelectCacWeapon);
     on<SelectDistWeapon>(_onSelectDistWeapon);
+    on<SelectCacAbility>(_onSelectCacAbility);
   }
 
   Future<void> _onInitializeAddCharacterForm(InitializeAddCharacterFormEvent event, Emitter<AddCharacterFormState> emit) async {
@@ -53,14 +55,15 @@ class AddCharacterFormBloc extends Bloc<AddCharacterFormEvent, AddCharacterFormS
     List<Weapon> weapons = await databaseService.getWeapons();
     _cacWeapons = weapons.where((element) => element.weaponType == WeaponType.MELEE || element.weaponType == WeaponType.MELEE_ET_DISTANCE).toList();
     _distWeapons = weapons.where((element) => element.weaponType == WeaponType.DISTANCE || element.weaponType == WeaponType.MELEE_ET_DISTANCE).toList();
-    emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.character, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
+    emit(FormLoaded(_character!, _characters, _creatures, _characterCreationType, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
 
   Future<void> _onCreationTypeChangeEvent(CreationTypeChangeEvent event, Emitter<AddCharacterFormState> emit) async {
     emit(FormLoading());
     _fromCreature = null;
     _fromCharacter = null;
-    emit(FormLoaded(_character!, _characters, _creatures, event.characterCreationType, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
+    _characterCreationType = event.characterCreationType;
+    emit(FormLoaded(_character!, _characters, _creatures, _characterCreationType, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
 
   void _updateControllersWithCharacter(Character character) {
@@ -80,29 +83,37 @@ class AddCharacterFormBloc extends Bloc<AddCharacterFormEvent, AddCharacterFormS
     emit(FormLoading());
     _fromCharacter = event.character;
     _fromCreature = null;
+    _characterCreationType = CharacterCreationType.character;
     _character = event.character;
     _updateControllersWithCharacter(_character!);
-    emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.character, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
+    emit(FormLoaded(_character!, _characters, _creatures, _characterCreationType, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
 
   void _onSelectCreature(SelectCreature event, Emitter<AddCharacterFormState> emit) {
     emit(FormLoading());
     _fromCharacter = null;
     _fromCreature = event.creature;
+    _characterCreationType = CharacterCreationType.creature;
     _character = characterService.initCharacter("", event.creature);
     _updateControllersWithCharacter(_character!);
-    emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.creature, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
+    emit(FormLoaded(_character!, _characters, _creatures, _characterCreationType, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
   void _onSelectCacWeapon(SelectCacWeapon event, Emitter<AddCharacterFormState> emit) {
     emit(FormLoading());
     _character!.cacWeapon = event.weapon;
-    emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.creature, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
+    emit(FormLoaded(_character!, _characters, _creatures, _characterCreationType, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
 
   void _onSelectDistWeapon(SelectDistWeapon event, Emitter<AddCharacterFormState> emit) {
     emit(FormLoading());
     _character!.distWeapon = event.weapon;
-    emit(FormLoaded(_character!, _characters, _creatures, CharacterCreationType.creature, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
+    emit(FormLoaded(_character!, _characters, _creatures, _characterCreationType, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
+  }
+
+  void _onSelectCacAbility(SelectCacAbility event, Emitter<AddCharacterFormState> emit) {
+    emit(FormLoading());
+    _character!.cacAbility = event.cacAbility;
+    emit(FormLoaded(_character!, _characters, _creatures, _characterCreationType, _fromCharacter, _fromCreature, _cacWeapons, _distWeapons));
   }
 
   @override

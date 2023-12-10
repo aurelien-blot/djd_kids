@@ -1,12 +1,10 @@
-import 'package:djd_kids/model/enums.dart';
-import 'package:djd_kids/service/character_service.dart';
+
 import 'package:djd_kids/service/database_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../constants.dart';
 import '../../model/character.dart';
-import '../../model/creature.dart';
 import '../../model/weapon.dart';
 import 'edit_character_form_event.dart';
 import 'edit_character_form_state.dart';
@@ -35,6 +33,7 @@ class EditCharacterFormBloc extends Bloc<EditCharacterFormEvent, EditCharacterFo
     on<InitializeEditCharacterFormEvent>(_onInitializeEditCharacterForm);
     on<SelectCacWeapon>(_onSelectCacWeapon);
     on<SelectDistWeapon>(_onSelectDistWeapon);
+    on<SelectCacAbility>(_onSelectCacAbility);
   }
 
   Future<void> _onInitializeEditCharacterForm(InitializeEditCharacterFormEvent event, Emitter<EditCharacterFormState> emit) async {
@@ -72,6 +71,12 @@ class EditCharacterFormBloc extends Bloc<EditCharacterFormEvent, EditCharacterFo
     emit(FormLoading());
     character.distWeapon = event.weapon;
     emit(FormLoaded(character, _cacWeapons, _distWeapons));
+  }
+
+  void _onSelectCacAbility(SelectCacAbility event, Emitter<EditCharacterFormState> emit) {
+    emit(FormLoading());
+    character.cacAbility = event.cacAbility;
+    emit(FormLoaded(character!, _cacWeapons, _distWeapons));
   }
 
   @override

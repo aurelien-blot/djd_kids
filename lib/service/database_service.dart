@@ -1,4 +1,5 @@
 import 'package:djd_kids/service/character_service.dart';
+import 'package:djd_kids/service/extract_json_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -309,6 +310,12 @@ class DatabaseService {
     return results;
   }
 
+  Future<Weapon?> getWeaponByName<T>(String name) async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> maps = await db.query(tableWeapons, where : '$columnName = ?', whereArgs: [name]);
+    return Weapon.fromMap(maps[0]);
+  }
+
   Future<List<Weapon>> getWeaponsByType(WeaponType weaponType) async {
     Database db = await instance.database;
     List<Map<String, dynamic>> maps = await db.query(tableWeapons, where : '$columnWeaponType = ?', whereArgs: [weaponType.name]);
@@ -337,12 +344,12 @@ class DatabaseService {
   }
 
 
-  Future<void> initDatas() async{
+  Future<String> initDatas() async{
     if (kDebugMode) {
       print("Init datas");
     }
-    final CharacterService characterService = CharacterService();
 
+    Weapon mainsNues = Weapon(name: 'Mains nues', diceDegatsNumber: 1, diceDegatsValue: 4, diceDegatsBonus: 0, weaponType: WeaponType.MELEE);
     Weapon weapon1 = Weapon(name: 'Bâton', diceDegatsNumber: 1, diceDegatsValue: 6, diceDegatsBonus: 0, weaponType: WeaponType.MELEE);
     Weapon weapon2 = Weapon(name: 'Dague', diceDegatsNumber: 1, diceDegatsValue: 4, diceDegatsBonus: 0, weaponType: WeaponType.MELEE);
     Weapon weapon2b = Weapon(name: 'Gourdin', diceDegatsNumber: 1, diceDegatsValue: 4, diceDegatsBonus: 0, weaponType: WeaponType.MELEE);
@@ -373,76 +380,77 @@ class DatabaseService {
     Weapon weapon8e = Weapon(name: 'Arbalète lourde', diceDegatsNumber: 1, diceDegatsValue: 10, diceDegatsBonus: 0, weaponType: WeaponType.DISTANCE);
     Weapon weapon8f = Weapon(name: 'Arc long', diceDegatsNumber: 1, diceDegatsValue: 8, diceDegatsBonus: 0, weaponType: WeaponType.DISTANCE);
 
-    insertWeapon(weapon1);
-    insertWeapon(weapon2);
-    insertWeapon(weapon2b);
-    insertWeapon(weapon2c);
-    insertWeapon(weapon2d);
-    insertWeapon(weapon2e);
-    insertWeapon(weapon2f);
-    insertWeapon(weapon7);
-    insertWeapon(weapon7a);
-    insertWeapon(weapon2g);
-    insertWeapon(weapon2a);
-    insertWeapon(weapon2h);
-    insertWeapon(weapon2i);
-    insertWeapon(weapon2j);
-    insertWeapon(weapon2k);
-    insertWeapon(weapon3);
-    insertWeapon(weapon4);
-    insertWeapon(weapon4a);
-    insertWeapon(weapon6);
-    insertWeapon(weapon6a);
-    insertWeapon(weapon6b);
-    insertWeapon(weapon6c);
-    insertWeapon(weapon8);
-    insertWeapon(weapon8a);
-    insertWeapon(weapon8b);
-    insertWeapon(weapon8c);
-    insertWeapon(weapon8d);
-    insertWeapon(weapon8e);
-    insertWeapon(weapon8f);
+    await insertWeapon(mainsNues);
+    await insertWeapon(weapon1);
+    await insertWeapon(weapon2);
+    await insertWeapon(weapon2b);
+    await insertWeapon(weapon2c);
+    await insertWeapon(weapon2d);
+    await insertWeapon(weapon2e);
+    await insertWeapon(weapon2f);
+    await insertWeapon(weapon7);
+    await insertWeapon(weapon7a);
+    await insertWeapon(weapon2g);
+    await insertWeapon(weapon2a);
+    await insertWeapon(weapon2h);
+    await insertWeapon(weapon2i);
+    await insertWeapon(weapon2j);
+    await insertWeapon(weapon2k);
+    await insertWeapon(weapon3);
+    await insertWeapon(weapon4);
+    await insertWeapon(weapon4a);
+    await insertWeapon(weapon6);
+    await insertWeapon(weapon6a);
+    await insertWeapon(weapon6b);
+    await insertWeapon(weapon6c);
+    await insertWeapon(weapon8);
+    await insertWeapon(weapon8a);
+    await insertWeapon(weapon8b);
+    await insertWeapon(weapon8c);
+    await insertWeapon(weapon8d);
+    await insertWeapon(weapon8e);
+    await insertWeapon(weapon8f);
 
 
-    Creature creature1 = Creature(name: 'Gobelin', strength: 8, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 8, charisma: 8, diceHpNumber: 3, diceHpValue: 6, diceHpBonus: 6, ca: 15, cacAbility: CacAbility.DEX);
-    Creature creature2 = Creature(name: 'Orc', strength: 16, dexterity: 12, constitution: 16, intelligence: 7, wisdom: 11, charisma: 10, diceHpNumber: 2, diceHpValue: 8, diceHpBonus: 6, ca: 13, cacAbility: CacAbility.FOR);
-    Creature creature3 = Creature(name: 'Géant des collines', strength: 21, dexterity: 8, constitution: 19, intelligence: 5, wisdom: 9, charisma: 6, diceHpNumber: 10, diceHpValue: 12, diceHpBonus: 40, ca: 13, cacAbility: CacAbility.FOR);
-    Creature creature4 = Creature(name: 'Géant du givre', strength: 23, dexterity: 9, constitution: 21, intelligence: 7, wisdom: 10, charisma: 12, diceHpNumber: 12, diceHpValue: 12, diceHpBonus: 60, ca: 15, cacAbility: CacAbility.FOR);
-    Creature creature5 = Creature(name: 'Géant des pierres', strength: 19, dexterity: 8, constitution: 20, intelligence: 10, wisdom: 12, charisma: 16, diceHpNumber: 11, diceHpValue: 12, diceHpBonus: 55, ca: 17, cacAbility: CacAbility.FOR);
-    Creature creature6 = Creature(name: 'Géant des tempêtes', strength: 25, dexterity: 14, constitution: 23, intelligence: 16, wisdom: 18, charisma: 20, diceHpNumber: 20, diceHpValue: 12, diceHpBonus: 100, ca: 16, cacAbility: CacAbility.FOR);
+    ExtractJsonService extractJsonService = ExtractJsonService();
+    List<Creature> creatures = await extractJsonService.extractCreatureListFromJson();
+    for(Creature creature in creatures){
+      await insertCreature(creature);
+    }
+    Character sam=Character(name: "Sam", strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 10, hpCurrent: 10, ca: 10, cacAbility: CacAbility.FOR);
+    Character felix=Character(name: "Félix", strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 10, hpCurrent: 10, ca: 10, cacAbility: CacAbility.FOR);
+    await insertCharacter(sam);
+    await insertCharacter(felix);
 
-     insertCreature(creature1);
-     insertCreature(creature2);
-     insertCreature(creature3);
-     insertCreature(creature4);
-     insertCreature(creature5);
-     insertCreature(creature6);
+    /*Character character1 = characterService.initCharacter('Gimli', creatures[0]);
+      Character character2 = characterService.initCharacter('Legolas', creatures[1]);
+      Character character3 = characterService.initCharacter('Gandalf', creatures[2]);
+      Character character4 = characterService.initCharacter('Aragorn', creatures[3]);
+      Character character5 = characterService.initCharacter('Boromir', creatures[4]);
+      Character character6 = characterService.initCharacter('Frodon', creatures[5]);
 
-    Character character1 = characterService.initCharacter('Gimli', creature1);
-    Character character2 = characterService.initCharacter('Legolas', creature2);
-    Character character3 = characterService.initCharacter('Gandalf', creature3);
-    Character character4 = characterService.initCharacter('Aragorn', creature4);
-    Character character5 = characterService.initCharacter('Boromir', creature5);
-    Character character6 = characterService.initCharacter('Frodon', creature6);
+      insertCharacter(character1);
+      insertCharacter(character2);
+      insertCharacter(character3);
+      insertCharacter(character4);
+      insertCharacter(character5);
+      insertCharacter(character6);
 
-    insertCharacter(character1);
-    insertCharacter(character2);
-    insertCharacter(character3);
-    insertCharacter(character4);
-    insertCharacter(character5);
-    insertCharacter(character6);
+      Character character1b=Character(name: "Sam", strength: 13, dexterity: 15, constitution: 16, intelligence: 18, wisdom: 20, charisma: 22, hpMax: 100, hpCurrent: 100, ca: 10, cacAbility: CacAbility.FOR);
+      Character character2b=Character(name: "Félix", strength: 10, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 12, charisma: 10, hpMax: 50, hpCurrent: 30, ca : 11, cacAbility: CacAbility.DEX);
+      Character character3b=Character(name: "Saroumane", strength: 11, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 8, hpMax: 70, hpCurrent: 7, ca : 13, cacAbility: CacAbility.FOR);
+      Character character4b=Character(name: "Sauron", strength: 10, dexterity: 7, constitution: 16, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 80, hpCurrent: 84, ca : 10, cacAbility: CacAbility.FOR);
+      Character character5b=Character(name: "Jacques", strength: 10, dexterity: 42, constitution: 10, intelligence: 10, wisdom: 10, charisma: 26, hpMax: 53, hpCurrent: 52, ca : 15, cacAbility: CacAbility.DEX);
 
-    Character character1b=Character(name: "Sam", strength: 13, dexterity: 15, constitution: 16, intelligence: 18, wisdom: 20, charisma: 22, hpMax: 100, hpCurrent: 100, ca: 10, cacAbility: CacAbility.FOR);
-    Character character2b=Character(name: "Félix", strength: 10, dexterity: 14, constitution: 10, intelligence: 10, wisdom: 12, charisma: 10, hpMax: 50, hpCurrent: 30, ca : 11, cacAbility: CacAbility.DEX);
-    Character character3b=Character(name: "Saroumane", strength: 11, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 8, hpMax: 70, hpCurrent: 7, ca : 13, cacAbility: CacAbility.FOR);
-    Character character4b=Character(name: "Sauron", strength: 10, dexterity: 7, constitution: 16, intelligence: 10, wisdom: 10, charisma: 10, hpMax: 80, hpCurrent: 84, ca : 10, cacAbility: CacAbility.FOR);
-    Character character5b=Character(name: "Jacques", strength: 10, dexterity: 42, constitution: 10, intelligence: 10, wisdom: 10, charisma: 26, hpMax: 53, hpCurrent: 52, ca : 15, cacAbility: CacAbility.DEX);
-
-    insertCharacter(character1b);
-    insertCharacter(character2b);
-    insertCharacter(character3b);
-    insertCharacter(character4b);
-    insertCharacter(character5b);
-
+      insertCharacter(character1b);
+      insertCharacter(character2b);
+      insertCharacter(character3b);
+      insertCharacter(character4b);
+      insertCharacter(character5b);
+  */
+    if (kDebugMode) {
+      print("Init datas OK");
+    }
+    return "ok";
   }
 }

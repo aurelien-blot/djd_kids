@@ -1,38 +1,39 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
-import '../model/creature.dart';
+import '../model/character.dart';
 
-class CreatureDialog extends StatefulWidget {
-  final Creature? creature;
+class CharacterDialog extends StatefulWidget {
+  final Character? character;
 
-  const CreatureDialog({Key? key, this.creature}) : super(key: key);
+  const CharacterDialog({Key? key, this.character}) : super(key: key);
 
   @override
-    _CreatureDialogState createState() => _CreatureDialogState();
+    _CharacterDialogState createState() => _CharacterDialogState();
 }
 
-class _CreatureDialogState extends State<CreatureDialog> {
+class _CharacterDialogState extends State<CharacterDialog> {
   final _formKey = GlobalKey<FormState>();
-  late Creature _currentCreature;
+  late Character _currentCharacter;
 
   @override
   void initState() {
     super.initState();
-    // Initialiser _currentCreature avec la créature passée ou créer une nouvelle instance
-    _currentCreature = widget.creature ?? Creature(wisdom: 0, strength: 0, dexterity: 0, constitution: 0, intelligence: 0, charisma: 0, diceHpNumber: 0, diceHpValue: 0, diceHpBonus: 0, ca: 0, cacAbility: CacAbility.FOR);
+    // Initialiser _currentCharacter avec la créature passée ou créer une nouvelle instance
+    _currentCharacter = widget.character ?? Character(wisdom: 0, strength: 0, dexterity: 0, constitution: 0, intelligence: 0, charisma: 0, ca: 0, cacAbility: CacAbility.FOR, name: '', hpMax: 0, hpCurrent: 0);
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Navigator.of(context).pop(_currentCreature);
+      Navigator.of(context).pop(_currentCharacter);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(_currentCreature.id == null ? 'Ajouter une créature' : 'Modifier la créature'),
+      title: Text(_currentCharacter.id == null ? 'Ajouter une créature' : 'Modifier la créature'),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -40,9 +41,9 @@ class _CreatureDialogState extends State<CreatureDialog> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextFormField(
-                initialValue: _currentCreature.name,
+                initialValue: _currentCharacter.name,
                 decoration: const InputDecoration(labelText: 'Nom'),
-                onSaved: (value) => _currentCreature.name = value,
+                onSaved: (value) => _currentCharacter.name = value!,
                 validator: (value) {
                   return (value == null || value.isEmpty) ? 'Ce champ est requis.' : null;
                 },
@@ -53,10 +54,10 @@ class _CreatureDialogState extends State<CreatureDialog> {
                   Expanded(
                     child :
                       TextFormField(
-                      initialValue: _currentCreature.strength.toString(),
+                      initialValue: _currentCharacter.strength.toString(),
                       decoration: const InputDecoration(labelText: 'Force'),
                       keyboardType: TextInputType.number,
-                      onSaved: (value) => _currentCreature.strength = int.tryParse(value ?? '') ?? 0,
+                      onSaved: (value) => _currentCharacter.strength = int.tryParse(value ?? '') ?? 0,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Ce champ est requis.';
@@ -72,10 +73,10 @@ class _CreatureDialogState extends State<CreatureDialog> {
                   Expanded(
                     child :
                       TextFormField(
-                    initialValue: _currentCreature.dexterity.toString(),
+                    initialValue: _currentCharacter.dexterity.toString(),
                     decoration: const InputDecoration(labelText: 'Dextérité'),
                     keyboardType: TextInputType.number,
-                    onSaved: (value) => _currentCreature.dexterity = int.tryParse(value ?? '') ?? 0,
+                    onSaved: (value) => _currentCharacter.dexterity = int.tryParse(value ?? '') ?? 0,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Ce champ est requis.';
@@ -91,10 +92,10 @@ class _CreatureDialogState extends State<CreatureDialog> {
                   Expanded(
                     child :
                       TextFormField(
-                    initialValue: _currentCreature.constitution.toString(),
+                    initialValue: _currentCharacter.constitution.toString(),
                     decoration: const InputDecoration(labelText: 'Constitution'),
                     keyboardType: TextInputType.number,
-                    onSaved: (value) => _currentCreature.constitution = int.tryParse(value ?? '') ?? 0,
+                    onSaved: (value) => _currentCharacter.constitution = int.tryParse(value ?? '') ?? 0,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Ce champ est requis.';
@@ -110,10 +111,10 @@ class _CreatureDialogState extends State<CreatureDialog> {
                   Expanded(
                     child :
                       TextFormField(
-                    initialValue: _currentCreature.intelligence.toString(),
+                    initialValue: _currentCharacter.intelligence.toString(),
                     decoration: const InputDecoration(labelText: 'Intelligence'),
                     keyboardType: TextInputType.number,
-                    onSaved: (value) => _currentCreature.intelligence = int.tryParse(value ?? '') ?? 0,
+                    onSaved: (value) => _currentCharacter.intelligence = int.tryParse(value ?? '') ?? 0,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Ce champ est requis.';
@@ -129,10 +130,10 @@ class _CreatureDialogState extends State<CreatureDialog> {
                   Expanded(
                     child :
                       TextFormField(
-                    initialValue: _currentCreature.wisdom.toString(),
+                    initialValue: _currentCharacter.wisdom.toString(),
                     decoration: const InputDecoration(labelText: 'Sagesse'),
                     keyboardType: TextInputType.number,
-                    onSaved: (value) => _currentCreature.wisdom = int.tryParse(value ?? '') ?? 0,
+                    onSaved: (value) => _currentCharacter.wisdom = int.tryParse(value ?? '') ?? 0,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Ce champ est requis.';
@@ -148,10 +149,10 @@ class _CreatureDialogState extends State<CreatureDialog> {
                   Expanded(
                     child :
                       TextFormField(
-                  initialValue: _currentCreature.charisma.toString(),
+                  initialValue: _currentCharacter.charisma.toString(),
                   decoration: const InputDecoration(labelText: 'Charisme'),
                   keyboardType: TextInputType.number,
-                  onSaved: (value) => _currentCreature.charisma = int.tryParse(value ?? '') ?? 0,
+                  onSaved: (value) => _currentCharacter.charisma = int.tryParse(value ?? '') ?? 0,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Ce champ est requis.';
@@ -171,10 +172,10 @@ class _CreatureDialogState extends State<CreatureDialog> {
                   Expanded(
                     child :
                       TextFormField(
-                      initialValue: _currentCreature.ca.toString(),
+                      initialValue: _currentCharacter.ca.toString(),
                       decoration: const InputDecoration(labelText: 'CA'),
                       keyboardType: TextInputType.number,
-                      onSaved: (value) => _currentCreature.ca = int.tryParse(value ?? '') ?? 0,
+                      onSaved: (value) => _currentCharacter.ca = int.tryParse(value ?? '') ?? 0,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Ce champ est requis.';
@@ -187,50 +188,15 @@ class _CreatureDialogState extends State<CreatureDialog> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Expanded(
-                    child :
-                      TextFormField(
-                    initialValue: _currentCreature.diceHpNumber.toString(),
-                    decoration: const InputDecoration(labelText: 'Nbre Dés de vie'),
-                    keyboardType: TextInputType.number,
-                    onSaved: (value) => _currentCreature.diceHpNumber = int.tryParse(value ?? '') ?? 0,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Ce champ est requis.';
-                      }
-                      if (int.tryParse(value) == null) {
-                        return 'Veuillez entrer un nombre valide.';
-                      }
-                      return null;
-                    },
-                  ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child :
+                  Expanded(child :
                     TextFormField(
-                      initialValue: _currentCreature.diceHpValue.toString(),
-                      decoration: const InputDecoration(labelText: 'Faces dés de vie'),
+                      initialValue: _currentCharacter.hpMax.toString(),
+                      decoration: const InputDecoration(labelText: 'Pts de Vie'),
                       keyboardType: TextInputType.number,
-                      onSaved: (value) => _currentCreature.diceHpValue = int.tryParse(value ?? '') ?? 0,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Ce champ est requis.';
-                        }
-                        if (int.tryParse(value) == null) {
-                          return 'Veuillez entrer un nombre valide.';
-                        }
-                        return null;
+                      onSaved: (value) {
+                          _currentCharacter.hpMax = int.tryParse(value ?? '') ?? 0;
+                          _currentCharacter.hpCurrent = _currentCharacter.hpMax;
                       },
-                    ),
-                  ),
-                  Expanded(
-                    child :
-                    TextFormField(
-                      initialValue: _currentCreature.diceHpBonus.toString(),
-                      decoration: const InputDecoration(labelText: 'Pts vie additionnels'),
-                      keyboardType: TextInputType.number,
-                      onSaved: (value) => _currentCreature.diceHpBonus = int.tryParse(value ?? '') ?? 0,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Ce champ est requis.';
@@ -244,30 +210,31 @@ class _CreatureDialogState extends State<CreatureDialog> {
                   ),
                   const SizedBox(width: 10),
                   Expanded(child:
-                  SegmentedButton<CacAbility>(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.selected)) {
-                            return Colors.blue;
-                          }
-                          return Colors.grey;
-                        },
+                    SegmentedButton<CacAbility>(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Colors.blue;
+                            }
+                            return Colors.grey;
+                          },
+                        ),
                       ),
-                    ),
-                    segments: const <ButtonSegment<CacAbility>>[
-                      ButtonSegment<CacAbility>(value: CacAbility.FOR, label: Text('FOR')),
-                      ButtonSegment<CacAbility>(value: CacAbility.DEX, label: Text('DEX')),
-                    ],
-                    selected: <CacAbility>{_currentCreature.cacAbility},
-                    onSelectionChanged: (Set<CacAbility> newSelection) {
-                      setState(() {
-                        _currentCreature.cacAbility = newSelection.first;
-                      });
+                      segments: const <ButtonSegment<CacAbility>>[
+                        ButtonSegment<CacAbility>(value: CacAbility.FOR, label: Text('FOR')),
+                        ButtonSegment<CacAbility>(value: CacAbility.DEX, label: Text('DEX')),
+                      ],
+                      selected: <CacAbility>{_currentCharacter.cacAbility},
+                      onSelectionChanged: (Set<CacAbility> newSelection) {
+                        setState(() {
+                          _currentCharacter.cacAbility = newSelection.first;
+                        });
 
-                    },
-                  ),
+                      },
+                    ),
                   )
+
                 ]
               ),
             ],

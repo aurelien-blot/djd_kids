@@ -34,6 +34,7 @@ dependencies:
   path_provider: ^2.1.1
   flutter_bloc: ^8.1.3
   font_awesome_flutter: ^10.6.0
+  flutter_launcher_icons: ^0.13.1
   equatable: ^2.0.5
   flutter_svg: ^2.0.9
 
@@ -66,6 +67,8 @@ flutter:
   assets:
     - assets/characters/
     - assets/icons/
+    - assets/logos/
+    - assets/creatures/creatures.json
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -96,3 +99,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/dragon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/logos/dragon.png"

@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/character_form/add_character_form_bloc.dart';
 import '../bloc/character_form/add_character_form_event.dart';
 import '../bloc/character_form/add_character_form_state.dart';
+import '../constants.dart';
 import '../model/character.dart';
 import '../model/creature.dart';
 import '../model/weapon.dart';
@@ -21,6 +22,8 @@ class AddCharacterForm extends StatelessWidget {
   final CharacterService characterService;
   final _formKey = GlobalKey<FormState>();
   AddCharacterForm({Key? key, required this.teamType, required this.databaseService, required this.characterService}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +136,28 @@ class AddCharacterForm extends StatelessWidget {
                           return (value == null || value.isEmpty) ? 'Ce champ est requis.' : null;
                         },
                       ),
+                    ),
+                    Expanded(child:
+                    SegmentedButton<CacAbility>(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Colors.blue;
+                            }
+                            return Colors.grey;
+                          },
+                        ),
+                      ),
+                      segments: const <ButtonSegment<CacAbility>>[
+                        ButtonSegment<CacAbility>(value: CacAbility.FOR, label: Text('FOR')),
+                        ButtonSegment<CacAbility>(value: CacAbility.DEX, label: Text('DEX')),
+                      ],
+                      selected: <CacAbility>{newCharacter.cacAbility},
+                      onSelectionChanged: (Set<CacAbility> newSelection) {
+                        context.read<AddCharacterFormBloc>().add(SelectCacAbility(newSelection.first));
+                      },
+                    ),
                     ),
                   ]
                 ),
@@ -283,6 +308,8 @@ class AddCharacterForm extends StatelessWidget {
                           },
                         ),
                       ),
+                      const SizedBox(width: 10),
+
 
                     ]
                 ),
@@ -318,7 +345,7 @@ class AddCharacterForm extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: () {
-                            context.read<AddCharacterFormBloc>().add(SelectDistWeapon(null));
+                            context.read<AddCharacterFormBloc>().add(SelectCacWeapon(null));
                           },
                         ),
                       )

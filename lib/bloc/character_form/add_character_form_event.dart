@@ -1,3 +1,4 @@
+import 'package:djd_kids/constants.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../model/character.dart';
@@ -50,4 +51,12 @@ class SelectDistWeapon extends AddCharacterFormEvent {
 
   @override
   List<Object?> get props => [weapon];
+}
+
+class SelectCacAbility extends AddCharacterFormEvent {
+  final CacAbility cacAbility;
+  SelectCacAbility(this.cacAbility);
+
+  @override
+  List<Object?> get props => [cacAbility];
 }
